@@ -136,7 +136,7 @@
 
 
 
-            @yield('content');
+            @yield('content')
 
         </div>
         <!-- END wrapper -->
@@ -216,5 +216,6 @@
                 @endif
             });
         </script>
+        @yield('javascript')
     </body>
     </html>

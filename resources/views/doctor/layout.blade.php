@@ -136,7 +136,7 @@
 
 
 
-            @yield('content');
+            @yield('content')
         </div>
         <!-- END wrapper -->
 
