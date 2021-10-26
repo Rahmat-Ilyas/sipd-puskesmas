@@ -9,13 +9,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12">
-					<h4 class="page-title">Staf Ruang Pemeriksaan</h4>
+					<h4 class="page-title">Data Antrian Pasien</h4>
 					<ol class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
 						</li>
 						<li class="active">
-							Staf Ruang Pemeriksaan
+							Data Antrian Pasien
 						</li>
 					</ol>
 				</div>
@@ -25,11 +25,11 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="card-box table-responsive">
-						<h4 class="m-t-0 header-title"><b>Data Antrian Pasien</b></h4>
-						<h5 class="text-dark font-14" style="padding-bottom: 20px;">
-							<span class=" pull-right"><b>Tanggal Peayanan : </b> <i>{{ date('d-m-Y') }}</i></span>
+						<h5 class="text-dark font-14 pull-right" style="padding-bottom: 20px;">
+							<u class=" "><b>Tanggal Peayanan : </b> <i>{{ date('d-m-Y') }}</i></u>
 						</h5>
-
+						<h4 class="m-t-0 header-title"><b>Data Antrian Pasien</b></h4>
+						<hr>
 						<table id="datatable" class="table table-striped table-bordered" style="margin-top: 20px;">
 							<thead>
 								<tr>

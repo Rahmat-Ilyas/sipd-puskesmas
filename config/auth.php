@@ -51,6 +51,11 @@ return [
             'provider' => 'admins',
         ],
 
+        'poli' => [
+            'driver' => 'session',
+            'provider' => 'polis',
+        ],
+
         'doctor' => [
             'driver' => 'session',
             'provider' => 'doctors',
@@ -83,6 +88,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
+        ],
+
+        'polis' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Poli::class,
         ],
 
         'doctors' => [

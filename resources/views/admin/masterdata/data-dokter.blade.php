@@ -31,10 +31,9 @@ $data = new App\Models\Doctor;
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="card-box table-responsive">
-						<h4 class="m-t-0 header-title"><b>Data Antrian Pasien</b></h4>
-
-						<button class="btn btn-primary btn-rounded m-t-10 m-b-20" data-toggle="modal" data-target=".modal-add"><i class="fa fa-plus-circle"></i> Tambah Data Dokter</button>
-
+						<h4 class="header-title"><b>Data Dokter Puskesma Bontonompo 2</b></h4>
+						<hr>
+						<button class="btn btn-primary btn-rounded m-b-20" data-toggle="modal" data-target=".modal-add"><i class="fa fa-plus-circle"></i> Tambah Data Dokter</button>
 						<table id="datatable" class="table table-striped table-bordered">
 							<thead>
 								<tr>
@@ -94,7 +93,7 @@ $data = new App\Models\Doctor;
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title">Tambah Inventori Alat</h4>
+				<h4 class="modal-title">Tambah Data Dokter</h4>
 			</div>
 			<div class="modal-body" style="padding: 20px 50px 0 50px">
 				<form method="POST" action="{{ url('admin/store/datadokter') }}">
@@ -164,7 +163,7 @@ $data = new App\Models\Doctor;
 								}
 								@endphp
 							</select>
-							<small class="text-warning">Password default untuk login dokter sama dengan NIP yang terdaftar</small>
+							{{-- <small class="text-warning">Password default untuk login dokter sama dengan NIP yang terdaftar</small> --}}
 						</div>
 					</div>
 					<div class="form-group row">
@@ -187,7 +186,7 @@ $data = new App\Models\Doctor;
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title">Tambah Inventori Alat</h4>
+				<h4 class="modal-title">Edit Data Dokter</h4>
 			</div>
 			<div class="modal-body" style="padding: 20px 50px 0 50px">
 				<form method="POST" action="{{ url('admin/update/datadokter') }}">
@@ -260,13 +259,13 @@ $data = new App\Models\Doctor;
 							</select>
 						</div>
 					</div>
-					<div class="form-group row">
+					{{-- <div class="form-group row">
 						<label class="col-sm-3 col-form-label">Password</label>
 						<div class="col-sm-9">
 							<input type="text" name="password" class="form-control" placeholder="Password.." autocomplete="off">
 							<small class="text-warning">Masukkan Password baru untuk mengganti password</small>
 						</div>
-					</div>
+					</div> --}}
 					<div class="form-group row">
 						<div class="col-sm-3"></div>
 						<div class="col-sm-9">

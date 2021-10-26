@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+    <meta name="description" content="A fully featured poli theme which can be used to build CRM, CMS, etc.">
     <meta name="author" content="Coderthemes">
 
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon_1.ico') }}">
 
-    <title>Admin - UPT Puskesmas Bontonompo II</title>
+    <title>Poli - UPT Puskesmas Bontonompo II</title>
 
     <!--Morris Chart CSS -->
     <link rel="stylesheet" href="{{ asset('assets/plugins/morris/morris.css') }}">
@@ -58,7 +58,7 @@
                         <!-- Image Logo here -->
                         <a href="index.html" class="logo">
                             <i class="icon-c-logo"> <img src="{{ asset('assets/images/logo_sm.png') }}" height="42"/> </i>
-                            <span><img src="{{ asset('assets/images/logo_sm.png') }}"/> Admin Page</span>
+                            <span><img src="{{ asset('assets/images/logo_sm.png') }}"/> Poli Page</span>
                         </a>
                     </div>
                 </div>
@@ -92,39 +92,39 @@
                         	<li class="text-muted menu-title">Main Menu</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/') }}" class="waves-effect"><i class="ti-home"></i> <span> Dashboard </span></a>
+                                <a href="{{ url('poli/') }}" class="waves-effect"><i class="ti-home"></i> <span> Dashboard </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/antrian') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Daftar Antrian Pasien </span></a>
+                                <a href="{{ url('poli/pemeriksaan') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Staf Ruang Pemeriksaan </span></a>
                             </li>
 
                             <li class="has_sub">
                                 <a href="javascript:void(0);" class="waves-effect"><i class="ti-archive"></i> <span> Master Data </span> <span class="menu-arrow"></span> </a>
                                 <ul class="list-unstyled">
-                                    <li><a href="{{ url('admin/masterdata/data-pasien') }}">Data Pasien</a></li>
-                                    <li><a href="{{ url('admin/masterdata/rekam-medik') }}">Data Rekam Medik</a></li>
-                                    <li><a href="{{ url('admin/masterdata/data-dokter') }}">Data Dokter</a></li>
-                                    <li><a href="{{ url('admin/masterdata/data-poli') }}">Data Poli</a></li>
+                                    <li><a href="{{ url('poli/masterdata/data-pasien') }}">Data Pasien</a></li>
+                                    <li><a href="{{ url('poli/masterdata/rekam-medik') }}">Data Rekam Medik</a></li>
+                                    <li><a href="{{ url('poli/masterdata/data-dokter') }}">Data Dokter</a></li>
+                                    <li><a href="{{ url('poli/masterdata/data-poli') }}">Data Poli</a></li>
                                 </ul>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/jadwal') }}" class="waves-effect"><i class="ti-time"></i> <span> Jadwal </span></a>
+                                <a href="{{ url('poli/jadwal') }}" class="waves-effect"><i class="ti-time"></i> <span> Jadwal </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/laporan') }}" class="waves-effect"><i class="ti-files"></i> <span> Laporan </span></a>
+                                <a href="{{ url('poli/laporan') }}" class="waves-effect"><i class="ti-files"></i> <span> Laporan </span></a>
                             </li>
 
                             <li class="text-muted menu-title">Pengaturan Akun</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/akun') }}" class="waves-effect"><i class="ti-user"></i> <span> Akun </span></a>
+                                <a href="{{ url('poli/akun') }}" class="waves-effect"><i class="ti-user"></i> <span> Akun </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/logout') }}" class="waves-effect"><i class="ti-power-off text-danger"></i> <span> Logout </span></a>
+                                <a href="{{ url('poli/logout') }}" class="waves-effect"><i class="ti-power-off text-danger"></i> <span> Logout </span></a>
                             </li>
                         </ul>
                         <div class="clearfix"></div>
@@ -137,9 +137,10 @@
 
 
             @yield('content');
-
         </div>
         <!-- END wrapper -->
+
+
 
         <script>
             var resizefunc = [];
@@ -180,6 +181,8 @@
 
         <script src="{{ asset('assets/pages/datatables.init.js') }}"></script>
 
+
+        <script src="{{ asset('assets/plugins/morris/morris.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/raphael/raphael-min.js') }}"></script>
 
         <script src="{{ asset('assets/plugins/bootstrap-sweetalert/sweet-alert.min.js') }}"></script>
@@ -197,23 +200,9 @@
 
         <script src="{{ asset('assets/pages/jquery.dashboard_2.js') }}"></script>
 
-        <script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
-        <script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
-
         <script>
             $(document).ready(function () {
                 $('#datatable').dataTable();
-                $(document).tooltip({ selector: '[data-toggle1="tooltip"]' });
-
-                @if(session('success'))
-                $.Notification.autoHideNotify('success', 'top right', 'Berhasil Diproses','{{ session('success') }}');
-                @endif
-
-                @if($errors->any())
-                @foreach ($errors->all() as $error)
-                $.Notification.autoHideNotify('error', 'top right', 'Terjadi Kesalahn','{{ $error }}');
-                @endforeach
-                @endif
             });
         </script>
     </body>

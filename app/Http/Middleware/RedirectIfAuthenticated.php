@@ -30,6 +30,11 @@ class RedirectIfAuthenticated
                     return redirect()->route('admin.home');
                 }
                 break;
+            case 'poli':
+                if (Auth::guard($guard)->check()) {
+                    return redirect()->route('poli.home');
+                }
+                break;
             case 'doctor':
                 if (Auth::guard($guard)->check()) {
                     return redirect()->route('doctor.home');

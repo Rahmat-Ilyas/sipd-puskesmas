@@ -41,6 +41,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/{dir}/{page}', 'AdminController@pagedir');
 });
 
+// Poli
+Route::group(['prefix' => 'poli'], function () {
+    Route::get('/login', 'Auth\AuthPoliController@showLoginForm')->name('poli.login');
+    Route::post('/login', 'Auth\AuthPoliController@login')->name('poli.login.submit');
+    Route::get('/logout', 'Auth\AuthPoliController@logout')->name('poli.logout');
+    Route::get('/', 'PoliController@home')->name('poli.home');
+
+    Route::get('/{page}', 'PoliController@page');
+    Route::get('/{dir}/{page}', 'PoliController@pagedir');
+});
+
 // Doctor
 Route::group(['prefix' => 'doctor'], function () {
     Route::get('/login', 'Auth\AuthDoctorController@showLoginForm')->name('doctor.login');

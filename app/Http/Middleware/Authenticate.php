@@ -18,6 +18,8 @@ class Authenticate extends Middleware
             return route('user.login');
         } else if ($request->is('admin')) {
             return route('admin.login');
+        } else if ($request->is('poli')) {
+            return route('poli.login');
         } else if ($request->is('doctor')) {
             return route('doctor.login');
         }
