@@ -3,6 +3,7 @@
 @php
 $data = new App\Models\Poli;
 $get_dokter = new App\Models\Doctor;
+$jadwal = new App\Models\Jadwal;
 $dokter = [];
 foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 	$dokter[] = [
@@ -59,29 +60,37 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 									<td>{{ $dta->nama_poli }}</td>
 									<td>{{ $dta->dokter->nama }}</td>
 
-									<td>
-										Seni - Jumat
+									<td><?php $ada = 0;
+									foreach ($jadwal->where('poli_id', $dta->id)->get() as $hri) {
+										echo $hri->hari.'<br><hr style="margin: 2px;">';
+										$ada++;
+									} echo ($ada != 0) ? '' : '<i>belum diatur<i>'; ?>
 									</td>
-									<td>
-										07:00 - 15:00
+
+									<td><?php $ada = 0;
+									foreach ($jadwal->where('poli_id', $dta->id)->get() as $jam) {
+										echo $jam->jam.'<br><hr style="margin: 2px;">';
+										$ada++;
+									} echo ($ada != 0) ? '' : '<i>belum diatur<i>'; ?>
 									</td>
 
 									<td width="80">
 										<button class="btn btn-sm btn-primary" data-toggle="modal" data-target=".modal-jadwal{{ $dta->id }}" data-toggle1="tooltip" title="Atur Jadwal"><i class="fa fa-clock-o"></i> Atur Jadwal</button>
 									</td>
 								</tr>									
-								<?php $no++; } ?>
-							</tbody>
-						</table>
-					</div>
+								<?php $no++; 
+							} ?>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<footer class="footer text-right">
-		© {{ date('Y') }}. All rights reserved.
-	</footer>
+<footer class="footer text-right">
+	© {{ date('Y') }}. All rights reserved.
+</footer>
 
 </div>
 
@@ -95,13 +104,14 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 				<h4 class="modal-title">Atur Jadwal {{ $dta->nama_poli }}</h4>
 			</div>
 			<div class="modal-body" style="padding-bottom: 0;">
-				<form method="POST" action="{{ url('admin/store/datapoli') }}">
+				<form method="POST" action="{{ url('admin/update/setjadwal') }}">
 					@csrf
 					<div class="form-group row">
 						<div class="col-sm-12">
 							<label class="col-form-label">Dokter Penanggung Jawab</label>
 						</div>
 						<div class="col-sm-8">
+							<input type="hidden" name="id" value="{{ $dta->id }}">
 							<select name="dokter_id" class="form-control" required="">
 								<option value="">.::Dokter Penanggung Jawab::.</option>
 								@php
@@ -116,19 +126,86 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 					</div>
 					<div class="set-jadwal">
 						<label class="col-form-label">Atur Jadwal</label>
-						<table class="table table-bordered">
+						<table class="table table-bordered" style="margin-bottom: 0px;">
 							<thead>
 								<tr>
 									<th width="210">Hari</th>
 									<th width="210">Jam</th>
-									<th>Aksi</th>
+									<th width="10" class="text-center">#</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
+							<tbody class="content-jadwal">
+								<?php $ada = 0; ?>
+								@foreach ($jadwal->where('poli_id', $dta->id)->get() as $time)
+								@php
+								$ada++;
+								$hari = explode(' - ', $time->hari);
+								$hari_awal = $hari[0];
+								$hari_akhir = isset($hari[1]) ? $hari[1] : '';
+
+								$jam = explode(' - ', $time->jam);
+								$jam_awal = $jam[0];
+								$jam_akhir = $jam[1];
+
+								$days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+								$jum = count($jadwal->where('poli_id', $dta->id)->get());
+								$disabled = 'disabled';
+								$class = 'hapus last-del';
+								if ($jum == $ada) {
+									$disabled = '';
+									$class = 'hapus';
+								}
+
+								if ($ada == 1) {
+									$class = '';
+									$disabled = 'disabled';
+								}
+								@endphp
+								<tr class="item-jadwal">
 									<td>
 										<div class="form-inline">
-											<select class="form-control input-sm hari-awal">
+											<select class="form-control input-sm hari-awal" name="hari_awal[]" required="">
+												<option value="">-Pilih-</option>
+												@php
+												foreach ($days as $day) {
+													if ($day == $hari_awal) $select = 'selected';
+													else $select = '';
+													echo '<option value="'.$day.'"'.$select.'>'.$day.'</option>';
+												}
+												@endphp
+											</select>
+											<small><b>s/d</b></small>
+											<select class="form-control input-sm hari-akhir" name="hari_akhir[]">
+												<option></option>
+												@php
+												foreach ($days as $day) {
+													if ($day == $hari_akhir) $select = 'selected';
+													else $select = '';
+													echo '<option value="'.$day.'"'.$select.'>'.$day.'</option>';
+												}
+												@endphp
+											</select>
+										</div>
+									</td>
+									<td>
+										<div class="form-inline">
+											<input type="time" class="form-control input-sm jam-awal" name="jam_awal[]" value="{{ $jam_awal }}" required="">
+											<small><b>s/d</b></small>
+											<input type="time" class="form-control input-sm jam-akhir" name="jam_akhir[]" value="{{ $jam_akhir }}" required="">
+										</div>
+									</td>
+									<td class="text-center">
+										<button type="button" class="btn btn-sm btn-danger {{ $class }}" {{ $disabled }}><i class="fa fa-trash"></i></button>
+									</td>
+								</tr>
+								@endforeach
+
+								@if ($ada == 0)
+								<tr class="item-jadwal">
+									<td>
+										<div class="form-inline">
+											<select class="form-control input-sm hari-awal" name="hari_awal[]" required="">
 												<option value="">-Pilih-</option>
 												<option>Senin</option>
 												<option>Selasa</option>
@@ -139,7 +216,7 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 												<option>Minggu</option>
 											</select>
 											<small><b>s/d</b></small>
-											<select class="form-control input-sm hari-akhir" disabled="">
+											<select class="form-control input-sm hari-akhir" name="hari_akhir[]" disabled="">
 												<option></option>
 												<option>Senin</option>
 												<option>Selasa</option>
@@ -153,23 +230,25 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 									</td>
 									<td>
 										<div class="form-inline">
-											<input type="time" class="form-control input-sm jam-awal" name="">
+											<input type="time" class="form-control input-sm jam-awal" name="jam_awal[]" required="">
 											<small><b>s/d</b></small>
-											<input type="time" class="form-control input-sm jam-akhir" name="">
+											<input type="time" class="form-control input-sm jam-akhir" name="jam_akhir[]" required="">
 										</div>
 									</td>
 									<td class="text-center">
-										<button class="btn btn-sm btn-primary"><i class="fa fa-plus-circle"></i> Tambah</button>
+										<a href="#" role="button" class="btn btn-sm btn-danger" disabled=""><i class="fa fa-trash"></i></a>
 									</td>
 								</tr>
+								@endif
 							</tbody>							
 						</table>
-						<small class="text-info info" hidden="">Info: Silahkan kosongkan pilihan hari selanjutnya jika jadwal hanya 1 hari </small>
+						<small class="text-info info" hidden="">Info: Silahkan kosongkan pilihan hari selanjutnya jika jadwal hanya 1 hari<br> </small>
+						<a href="#" role="button" class="btn btn-sm btn-primary m-t-5 tambah"><i class="fa fa-plus-circle"></i> Tambah</a>
 					</div>
 					<div class="text-right">
 						<hr>
 						<button type="submit" class="btn btn-default">Simpan Jadwal</button>
-						<button type="" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Batal</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Batal</button>
 					</div>
 				</form>
 			</div>
@@ -177,7 +256,6 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 	</div>
 </div>
 @endforeach
-
 
 <!-- ============================================================== -->
 <!-- End Right content here -->
@@ -200,23 +278,72 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 				else option += '<option disabled="">'+val+'</option>';
 			});
 
-			$(this).parents('.set-jadwal').find('.hari-akhir').html(option);
-			$(this).parents('.set-jadwal').find('.hari-akhir').removeAttr('disabled');
+			$(this).parents('.item-jadwal').find('.hari-akhir').html(option);
+			$(this).parents('.item-jadwal').find('.hari-akhir').removeAttr('disabled');
 			$(this).parents('.set-jadwal').find('.info').removeAttr('hidden');
 
 			if (value == '') {
-				$(this).parents('.set-jadwal').find('.hari-akhir').attr('disabled', '');
+				$(this).parents('.item-jadwal').find('.hari-akhir').attr('disabled', '');
 				$(this).parents('.set-jadwal').find('.info').attr('hidden', '');
 			}
 		});
 
 		$(document).on('change', '.jam-akhir', function(event) {
-			var jam_awal = $(this).parents('.set-jadwal').find('.jam-awal').val();
-			var jam_akhir = $(this).val();
+			var jam_awal = $(this).parents('.item-jadwal').find('.jam-awal').val().replace(':', '');
+			var jam_akhir = $(this).val().replace(':', '');
 
-			if (jam_awal>jam_akhir) {
-				console.log("OK");
+			if (parseInt(jam_awal)>parseInt(jam_akhir)) {
+				alert("Pastikan anda menginput jadwal yang benar");
+				$(this).val('');
 			}
+
+			if (jam_awal == '') {
+				alert("Masukkan Jam mulai");
+				$(this).val('');
+			}
+		});
+
+		$(document).on('click', '.tambah', function(event) {
+			event.preventDefault();
+			$(this).parents('.set-jadwal').find('.info').attr('hidden', '');
+			$(this).parents('.set-jadwal').find('.hapus').attr('disabled', '').addClass('last-del');
+			var content = `
+			<tr class="item-jadwal">
+			<td>
+			<div class="form-inline">
+			<select class="form-control input-sm hari-awal" name="hari_awal[]" required="">
+			<option value="">-Pilih-</option>
+			<option>Senin</option>
+			<option>Selasa</option>
+			<option>Rabu</option>
+			<option>Kamis</option>
+			<option>Jumat</option>
+			<option>Sabtu</option>
+			<option>Minggu</option>
+			</select>
+			<small><b>s/d</b></small>
+			<select class="form-control input-sm hari-akhir" name="hari_akhir[]" disabled="">
+			<option>Selasa</option>
+			</select>
+			</div>
+			</td>
+			<td>
+			<div class="form-inline">
+			<input type="time" class="form-control input-sm jam-awal" name="jam_awal[]" required="">
+			<small><b>s/d</b></small>
+			<input type="time" class="form-control input-sm jam-akhir" name="jam_akhir[]" required="">
+			</div>
+			</td>
+			<td class="text-center">
+			<button type="button" class="btn btn-sm btn-danger hapus"><i class="fa fa-trash"></i></button>
+			</td>
+			</tr>`;
+			$(this).parents('.set-jadwal').find('.content-jadwal').append(content);
+		});
+
+		$(document).on('click', '.hapus', function(event) {
+			$(this).parents('.item-jadwal').remove();
+			$('.last-del').last().removeAttr('disabled');
 		});
 	});
 </script>

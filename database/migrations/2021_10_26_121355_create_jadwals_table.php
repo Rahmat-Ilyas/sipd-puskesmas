@@ -13,7 +13,7 @@ class CreateJadwalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('jadwals', function (Blueprint $table) {
+        Schema::create('jadwal', function (Blueprint $table) {
             $table->id();
             $table->integer('poli_id');
             $table->string('hari');

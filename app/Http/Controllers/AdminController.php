@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\Poli;
+use App\Models\Jadwal;
+use App\Models\Admin;
 
 class AdminController extends Controller
 {
@@ -81,18 +83,53 @@ class AdminController extends Controller
 
             return back()->with('success', 'Data pasien berhasil diupdate');
         } else if ($target == 'datapoli') {
-            $dokter = Poli::where('id', $request->id)->first();
+            $poli = Poli::where('id', $request->id)->first();
             if ($request->password == '') $except = ['_token', 'id', 'password'];
             else {
                 $except = ['_token', 'id'];
                 $request['password'] = bcrypt($request->password);
             }
             foreach ($request->except($except) as $key => $data) {
-                $dokter->$key = $data;
+                $poli->$key = $data;
             }
-            $dokter->save();
+            $poli->save();
 
             return back()->with('success', 'Data poli berhasil diupdate');
+        } else if ($target == 'setjadwal') {
+            $poli = Poli::where('id', $request->id)->first();
+            $poli->dokter_id = $request->dokter_id;
+            $poli->save();
+
+            $jadwal = Jadwal::where('poli_id', $request->id)->get();
+            foreach ($jadwal as $jdw) {
+                $jdw->delete();
+            }
+
+            foreach ($request->hari_awal as $i => $dta) {
+                $hari_akhir = ($request->hari_akhir[$i] == '') ? '' : ' - '.$request->hari_akhir[$i];
+                $hari = $request->hari_awal[$i].$hari_akhir;
+                $jam = $request->jam_awal[$i].' - '.$request->jam_akhir[$i];
+                Jadwal::create([
+                    'poli_id' => $request->id,
+                    'hari' => $hari,
+                    'jam' => $jam,
+                ]);
+            }
+
+            return back()->with('success', 'Jadwal poli berhasil diupdate');
+        } else if ($target == 'akun') {
+            $akun = Admin::where('id', $request->id)->first();
+            if ($request->password == '') $except = ['_token', 'id', 'password'];
+            else {
+                $except = ['_token', 'id'];
+                $request['password'] = bcrypt($request->password);
+            }
+            foreach ($request->except($except) as $key => $data) {
+                $akun->$key = $data;
+            }
+            $akun->save();
+
+            return back()->with('success', 'Data akun berhasil diupdate');
         }
     }
 

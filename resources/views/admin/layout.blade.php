@@ -11,7 +11,6 @@
     <title>Admin - UPT Puskesmas Bontonompo II</title>
 
     <!--Morris Chart CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/plugins/morris/morris.css') }}">
     <link href="{{ asset('assets/plugins/bootstrap-sweetalert/sweet-alert.css') }}" rel="stylesheet" type="text/css">
 
     <!-- DataTables -->
@@ -73,6 +72,15 @@
                                 </button>
                                 <span class="clearfix"></span>
                             </div>
+                            <ul class="nav navbar-nav navbar-right pull-right">
+                                <li class="dropdown top-menu-item-xs">
+                                    <a href="" class="dropdown-toggle profile waves-effect waves-light" data-toggle="dropdown" aria-expanded="true">
+                                        <span style="font-size: 15px; margin-right: 2px;" class="namaView">
+                                            <b>{{ Auth::user()->nama }}</b>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                         <!--/.nav-collapse -->
                     </div>
@@ -120,7 +128,7 @@
                             <li class="text-muted menu-title">Pengaturan Akun</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/akun') }}" class="waves-effect"><i class="ti-user"></i> <span> Akun </span></a>
+                                <a href="#" class="waves-effect" data-toggle="modal" data-target=".modal-akun"><i class="ti-user"></i> <span> Akun </span></a>
                             </li>
 
                             <li class="has_sub">
@@ -140,6 +148,75 @@
 
         </div>
         <!-- END wrapper -->
+
+        <div class="modal modal-akun" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Pengaturan Akun</h4>
+                    </div>
+                    <div class="modal-body" style="padding: 20px 50px 0 50px">
+                        <table class="table table-bordered" id="detail-akun">
+                            <tbody>
+                                <tr>
+                                    <td>NIP</td><td>:</td>
+                                    <td>{{ Auth::user()->nip }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Admin</td><td>:</td>
+                                    <td>{{ Auth::user()->nama }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Username</td><td>:</td>
+                                    <td>{{ Auth::user()->username }}</td>
+                                </tr>
+                            </tbody>                            
+                        </table>
+                        <form method="POST" action="{{ url('admin/update/akun') }}" id="edit-akun" hidden="">
+                            @csrf
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">NIP</label>
+                                <div class="col-sm-9">
+                                    <input type="hidden" name="id" value="{{ Auth::user()->id }}">
+                                    <input type="number" name="nip" class="form-control" required="" autocomplete="off" placeholder="NIP.." value="{{ Auth::user()->nip }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Nama Admin</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="nama" class="form-control" required="" autocomplete="off" placeholder="Nama Admin.." value="{{ Auth::user()->nama }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="username" class="form-control" required="" autocomplete="off" placeholder="Username.." value="{{ Auth::user()->username }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="password" class="form-control" placeholder="Password.." autocomplete="off">
+                                    <small class="text-warning">Masukkan Password baru untuk mengganti password</small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <button type="submit" class="btn btn-default">Simpan</button>
+                                    <button type="button" class="btn btn-primary" id="btn-batal-edit">Batal</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-right" id="akun-kontrol">
+                            <button type="" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Tutup</button>                            
+                            <button type="button" class="btn btn-primary" id="btn-edit-akun">Edit Akun</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
             var resizefunc = [];
@@ -195,8 +272,6 @@
         <script src="{{ asset('assets/js/jquery.core.js') }}"></script>
         <script src="{{ asset('assets/js/jquery.app.js') }}"></script>
 
-        <script src="{{ asset('assets/pages/jquery.dashboard_2.js') }}"></script>
-
         <script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
         <script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
 
@@ -204,6 +279,18 @@
             $(document).ready(function () {
                 $('#datatable').dataTable();
                 $(document).tooltip({ selector: '[data-toggle1="tooltip"]' });
+
+                $('#btn-edit-akun').click(function(event) {
+                    $('#edit-akun').removeAttr('hidden');
+                    $('#detail-akun').attr('hidden', '');
+                    $('#akun-kontrol').attr('hidden', '');
+                });
+
+                $('#btn-batal-edit').click(function(event) {
+                    $('#edit-akun').attr('hidden', '');
+                    $('#detail-akun').removeAttr('hidden');
+                    $('#akun-kontrol').removeAttr('hidden');
+                });
 
                 @if(session('success'))
                 $.Notification.autoHideNotify('success', 'top right', 'Berhasil Diproses','{{ session('success') }}');

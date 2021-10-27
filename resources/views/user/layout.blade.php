@@ -73,6 +73,15 @@
                                 </button>
                                 <span class="clearfix"></span>
                             </div>
+                            <ul class="nav navbar-nav navbar-right pull-right">
+                                <li class="dropdown top-menu-item-xs">
+                                    <a href="" class="dropdown-toggle profile waves-effect waves-light" data-toggle="dropdown" aria-expanded="true">
+                                        <span style="font-size: 15px; margin-right: 2px;" class="namaView">
+                                            <b>{{ Auth::user()->nama }}</b>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                         <!--/.nav-collapse -->
                     </div>
@@ -96,11 +105,11 @@
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('user/pemeriksaan') }}" class="waves-effect"><i class="ti-ticket"></i> <span> Ambil Antrian </span></a>
+                                <a href="{{ url('user/antrian') }}" class="waves-effect"><i class="ti-ticket"></i> <span> Ambil Antrian </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('user/pemeriksaan') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Rekam Medik Saya </span></a>
+                                <a href="{{ url('user/rekam-medik') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Rekam Medik Saya </span></a>
                             </li>
 
                             <li class="has_sub">
@@ -110,11 +119,11 @@
                             <li class="text-muted menu-title">Data Diri & Akun</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('user/akun') }}" class="waves-effect"><i class="ti-id-badge"></i> <span> Data Diri </span></a>
+                                <a href="{{ url('user/data-diri') }}" class="waves-effect"><i class="ti-id-badge"></i> <span> Data Diri </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('user/akun') }}" class="waves-effect"><i class="ti-user"></i> <span> Akun </span></a>
+                                <a href="#" class="waves-effect" data-toggle="modal" data-target=".modal-akun"><i class="ti-user"></i> <span> Akun </span></a>
                             </li>
 
 
@@ -134,6 +143,75 @@
             @yield('content')
         </div>
         <!-- END wrapper -->
+
+        <div class="modal modal-akun" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Pengaturan Akun</h4>
+                    </div>
+                    <div class="modal-body" style="padding: 20px 50px 0 50px">
+                        <table class="table table-bordered" id="detail-akun">
+                            <tbody>
+                                <tr>
+                                    <td width="150">No. Rekam Medik</td><td>:</td>
+                                    <td>{{ Auth::user()->no_rekam_medik }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="150">NIK</td><td>:</td>
+                                    <td>{{ Auth::user()->nik }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama</td><td>:</td>
+                                    <td>{{ Auth::user()->nama }}</td>
+                                </tr>
+                            </tbody>                            
+                        </table>
+                        <form method="POST" action="{{ url('user/update/akun') }}" id="edit-akun" hidden="">
+                            @csrf
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">No. Rekam Medik</label>
+                                <div class="col-sm-9">
+                                    <input type="hidden" name="id" value="{{ Auth::user()->id }}">
+                                    <input type="text" name="nip" class="form-control" required="" autocomplete="off" placeholder="No. Rekam Medik.." value="{{ Auth::user()->no_rekam_medik }}" readonly="">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">NIK</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="nip" class="form-control" required="" autocomplete="off" placeholder="NIK.." value="{{ Auth::user()->nik }}" readonly="">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Nama</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="nama" class="form-control" required="" autocomplete="off" placeholder="Nama.." value="{{ Auth::user()->nama }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="password" class="form-control" placeholder="Password.." autocomplete="off">
+                                    <small class="text-warning">Masukkan Password baru untuk mengganti password</small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <button type="submit" class="btn btn-default">Simpan</button>
+                                    <button type="button" class="btn btn-primary" id="btn-batal-edit">Batal</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-right" id="akun-kontrol">
+                            <button type="" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Tutup</button>                            
+                            <button type="button" class="btn btn-primary" id="btn-edit-akun">Edit Akun</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -198,7 +276,30 @@
         <script>
             $(document).ready(function () {
                 $('#datatable').dataTable();
+
+                $('#btn-edit-akun').click(function(event) {
+                    $('#edit-akun').removeAttr('hidden');
+                    $('#detail-akun').attr('hidden', '');
+                    $('#akun-kontrol').attr('hidden', '');
+                });
+
+                $('#btn-batal-edit').click(function(event) {
+                    $('#edit-akun').attr('hidden', '');
+                    $('#detail-akun').removeAttr('hidden');
+                    $('#akun-kontrol').removeAttr('hidden');
+                });
+
+                @if(session('success'))
+                $.Notification.autoHideNotify('success', 'top right', 'Berhasil Diproses','{{ session('success') }}');
+                @endif
+
+                @if($errors->any())
+                @foreach ($errors->all() as $error)
+                $.Notification.autoHideNotify('error', 'top right', 'Terjadi Kesalahn','{{ $error }}');
+                @endforeach
+                @endif
             });
         </script>
+        @yield('javascript')
     </body>
     </html>

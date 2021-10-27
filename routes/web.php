@@ -22,6 +22,10 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('/logout', 'Auth\AuthUserController@logout')->name('user.logout');
     Route::get('/', 'UserController@home')->name('user.home');
 
+    Route::post('/store/{target}', 'UserController@store');
+    Route::post('/update/{target}', 'UserController@update');
+    Route::get('/delete/{target}/{id}', 'UserController@delete');
+
     Route::get('/{page}', 'UserController@page');
     Route::get('/{dir}/{page}', 'UserController@pagedir');
 });
