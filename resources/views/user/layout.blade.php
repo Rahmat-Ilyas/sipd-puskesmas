@@ -174,13 +174,13 @@
                                 <label class="col-sm-3 col-form-label">No. Rekam Medik</label>
                                 <div class="col-sm-9">
                                     <input type="hidden" name="id" value="{{ Auth::user()->id }}">
-                                    <input type="text" name="nip" class="form-control" required="" autocomplete="off" placeholder="No. Rekam Medik.." value="{{ Auth::user()->no_rekam_medik }}" readonly="">
+                                    <input type="text" name="no_rekam_medik" class="form-control" required="" autocomplete="off" placeholder="No. Rekam Medik.." value="{{ Auth::user()->no_rekam_medik }}" readonly="">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">NIK</label>
                                 <div class="col-sm-9">
-                                    <input type="text" name="nip" class="form-control" required="" autocomplete="off" placeholder="NIK.." value="{{ Auth::user()->nik }}" readonly="">
+                                    <input type="text" name="nik" class="form-control" required="" autocomplete="off" placeholder="NIK.." value="{{ Auth::user()->nik }}" readonly="">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -271,7 +271,8 @@
         <script src="{{ asset('assets/js/jquery.core.js') }}"></script>
         <script src="{{ asset('assets/js/jquery.app.js') }}"></script>
 
-        <script src="{{ asset('assets/pages/jquery.dashboard_2.js') }}"></script>
+        <script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
+        <script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
 
         <script>
             $(document).ready(function () {

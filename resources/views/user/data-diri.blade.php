@@ -83,20 +83,20 @@ $data = $user->where('id', Auth::user()->id)->first();
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">No. Rekam Medik</label>
 											<div class="col-sm-9">
+												<input type="hidden" name="id" value="{{ $data->id }}">
 												<input type="text" name="no_rekam_medik" class="form-control" required="" autocomplete="off" placeholder="No. Rekam Medik.." value="{{ $data->no_rekam_medik }}" readonly="">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">NIK</label>
 											<div class="col-sm-9">
-												<input type="hidden" name="id" value="{{ $data->id }}">
 												<input type="number" name="nik" class="form-control" required="" autocomplete="off" placeholder="NIK.." value="{{ $data->nik }}">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">Nama Lengkap</label>
 											<div class="col-sm-9">
-												<input type="text" name="nama" class="form-control" required="" autocomplete="off" placeholder="Nama Lengkap.." value="{{ $data->nama }}">
+												<input type="text" name="nama" class="form-control" required="" autocomplete="off" placeholder="Nama Lengkap.." value="{{ old('nama') ? old('nama') : $data->nama }}">
 											</div>
 										</div>
 										<div class="form-group row">
@@ -106,8 +106,9 @@ $data = $user->where('id', Auth::user()->id)->first();
 													<option value="">.::Jenis Kelamin::.</option>
 													@php
 													$jenis_kelamin = ['Laki-laki', 'Perempuan'];
+													$cek_jnk = old('jenis_kelamin') ? old('jenis_kelamin') : $data->jenis_kelamin;
 													foreach ($jenis_kelamin as $jnk) {
-														if ($jnk == $data->jenis_kelamin) $select = 'selected';
+														if ($jnk == $cek_jnk) $select = 'selected';
 														else $select = '';
 														echo '<option value="'.$jnk.'"'.$select.'>'.$jnk.'</option>';
 													}
@@ -118,19 +119,19 @@ $data = $user->where('id', Auth::user()->id)->first();
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">Tempat Lahir</label>
 											<div class="col-sm-9">
-												<input type="text" name="tempat_lahir" class="form-control" required="" placeholder="Tempat Lahir.." autocomplete="off" value="{{ $data->tempat_lahir }}">
+												<input type="text" name="tempat_lahir" class="form-control" required="" placeholder="Tempat Lahir.." autocomplete="off" value="{{ old('tempat_lahir') ? old('tempat_lahir') : $data->tempat_lahir }}">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">Tanggal Lahir</label>
 											<div class="col-sm-9">
-												<input type="date" name="tanggal_lahir" class="form-control" required="" placeholder="Tanggal Lahir.." autocomplete="off" value="{{ $data->tanggal_lahir }}">
+												<input type="date" name="tanggal_lahir" class="form-control" required="" placeholder="Tanggal Lahir.." autocomplete="off" value="{{ old('tanggal_lahir') ? old('tanggal_lahir') : $data->tanggal_lahir }}">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label class="col-sm-3 col-form-label">Alamat Lengkap</label>
 											<div class="col-sm-9">
-												<textarea name="alamat" class="form-control" required="" placeholder="Alamat.." rows="3">{{ $data->alamat }}</textarea>
+												<textarea name="alamat" class="form-control" required="" placeholder="Alamat.." rows="3">{{ old('alamat') ? old('alamat') : $data->alamat }}</textarea>
 											</div>
 										</div>
 										<div class="form-group row">
@@ -140,8 +141,9 @@ $data = $user->where('id', Auth::user()->id)->first();
 													<option value="">.::Jaminan Kesehatan::.</option>
 													@php
 													$jaminan_kesehatan = ['BPJS', 'KIS', 'JKN', 'Tidak Ada'];
+													$cek_jks = old('jaminan_kesehatan') ? old('jaminan_kesehatan') : $data->jaminan_kesehatan;
 													foreach ($jaminan_kesehatan as $jks) {
-														if ($jks == $data->jaminan_kesehatan) $select = 'selected';
+														if ($jks == $cek_jks) $select = 'selected';
 														else $select = '';
 														echo '<option value="'.$jks.'"'.$select.'>'.$jks.'</option>';
 													}
@@ -156,10 +158,11 @@ $data = $user->where('id', Auth::user()->id)->first();
 													<option value="">.::Status Kawin::.</option>
 													@php
 													$status_perkawinan = ['Belum Menikah', 'Menikah', 'Cerai'];
-													foreach ($status_perkawinan as $jnk) {
-														if ($jnk == $data->status_perkawinan) $select = 'selected';
+													$cek_stk = old('status_perkawinan') ? old('status_perkawinan') : $data->status_perkawinan;
+													foreach ($status_perkawinan as $stk) {
+														if ($stk == $cek_stk) $select = 'selected';
 														else $select = '';
-														echo '<option value="'.$jnk.'"'.$select.'>'.$jnk.'</option>';
+														echo '<option value="'.$stk.'"'.$select.'>'.$stk.'</option>';
 													}
 													@endphp
 												</select>
@@ -205,6 +208,11 @@ $data = $user->where('id', Auth::user()->id)->first();
 			$('#edit-data-diri').attr('hidden', '');
 			$('#detail-data-diri').removeAttr('hidden');
 		});
+
+		@if(old('nik'))
+		$('#edit-data-diri').removeAttr('hidden');
+		$('#detail-data-diri').attr('hidden', '');
+		@endif
 	});
 </script>
 @endsection
