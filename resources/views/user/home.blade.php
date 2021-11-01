@@ -39,7 +39,7 @@
 						<h4 class="text-center">Assalamualikum, {{ Auth::user()->nama }}</h4>
 						<h2 class="text-center">Selamat Datang di Halaman Pasien UPT Puskesmas Bontonompo II</h2>
 						<div class="text-center m-t-20">
-							<button class="btn btn-default"><i class="fa fa-ticket"></i> Ambil Antrian</button>
+							<a href="{{ url('user/antrian') }}" class="btn btn-default"><i class="fa fa-ticket"></i> Ambil Antrian</a>
 						</div>
 					</div>
 				</div>

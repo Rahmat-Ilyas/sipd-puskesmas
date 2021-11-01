@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User
+Route::get('/', 'UserController@home');
 Route::group(['prefix' => 'user'], function () {
     Route::get('/login', 'Auth\AuthUserController@showLoginForm')->name('user.login');
     Route::post('/login', 'Auth\AuthUserController@login')->name('user.login.submit');
