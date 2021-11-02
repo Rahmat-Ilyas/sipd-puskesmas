@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Antrian extends Model
 {
     use HasFactory;
+
+    protected $table = 'antrian';
+    protected $guarded = [];
 }

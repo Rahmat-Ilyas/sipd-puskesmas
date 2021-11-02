@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Poli;
 use App\Models\Jadwal;
 use App\Models\Admin;
+use App\Models\Antrian;
 
 class UserController extends Controller
 {
@@ -92,5 +93,55 @@ class UserController extends Controller
 
         //     return back()->with('success', 'Data poli berhasil dihapus');
         // }
+    }
+
+    public function config(Request $request)
+    {
+        if ($request->req == 'getAntrian') {
+            $poli = Poli::where('status_layanan', 'Aktif')->get();
+
+            $result = [];
+            foreach ($poli as $i => $pli) {
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->get();
+                $antrian_poli = count($antrian)+1;
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', 'proccess')->first();
+                $antrian_dilayani = ($antrian) ? $antrian->nomor_antrian : '--';
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();
+                $sisa_antrian = count($antrian).' Antrian';
+
+                $antrian_tersedia = range('A', 'Z')[$i].'-'.sprintf('%03s', $antrian_poli);
+                $result[] = [
+                    "poli_id" => $pli->id,
+                    "antrian_tersedia" => $antrian_tersedia,
+                    "antrian_dilayani" => $antrian_dilayani,
+                    "sisa_antrian" => $sisa_antrian,
+                ];
+            }
+
+            if (isset($request->poli_id)) {
+                $poli_id = $request->poli_id;
+                $poli = Poli::where('id', $poli_id)->first();
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
+                $antrian_poli = count($antrian)+1;
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->where('status', 'proccess')->first();
+                $antrian_dilayani = ($antrian) ? $antrian->nomor_antrian : '--';
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();
+                $sisa_antrian = count($antrian).' Antrian';
+
+                $antrian_tersedia = range('A', 'Z')[$i].'-'.sprintf('%03s', $antrian_poli);
+                $result = [
+                    "chg_nama_poli" => $poli->nama_poli,
+                    "chg_antrian_tersedia" => $antrian_tersedia,
+                    "chg_antrian_dilayani" => $antrian_dilayani,
+                    "chg_sisa_antrian" => $sisa_antrian,
+                ];
+            }
+            
+            return response()->json($result, 200);
+        }
     }
 }

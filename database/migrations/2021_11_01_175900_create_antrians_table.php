@@ -17,7 +17,7 @@ class CreateAntriansTable extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('poli_id');
-            $table->integer('nomor_antrian');
+            $table->string('nomor_antrian');
             $table->string('status');
             $table->timestamps();
         });

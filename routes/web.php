@@ -23,6 +23,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('/logout', 'Auth\AuthUserController@logout')->name('user.logout');
     Route::get('/', 'UserController@home')->name('user.home');
 
+    Route::post('/config', 'UserController@config');
     Route::post('/store/{target}', 'UserController@store');
     Route::post('/update/{target}', 'UserController@update');
     Route::get('/delete/{target}/{id}', 'UserController@delete');
@@ -38,6 +39,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/logout', 'Auth\AuthAdminController@logout')->name('admin.logout');
     Route::get('/', 'AdminController@home')->name('admin.home');
 
+    Route::post('/config', 'AdminController@config');
     Route::post('/store/{target}', 'AdminController@store');
     Route::post('/update/{target}', 'AdminController@update');
     Route::get('/delete/{target}/{id}', 'AdminController@delete');

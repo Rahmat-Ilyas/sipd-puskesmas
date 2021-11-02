@@ -54,7 +54,7 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 								</tr>
 							</thead>
 							<tbody>
-								<?php  $no=1; foreach ($data->all() as $dta) { ?>
+								<?php  $no=1; foreach ($data->where('status_layanan', 'Aktif')->get() as $dta) { ?>
 								<tr>
 									<td>{{ $no }}</td>
 									<td>{{ $dta->nama_poli }}</td>
