@@ -9,13 +9,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12">
-					<h4 class="page-title">Daftar Antrian Pasien</h4>
+					<h4 class="page-title">Data Antrian Pasien</h4>
 					<ol class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
 						</li>
 						<li class="active">
-							Daftar Antrian Pasien
+							Data Antrian Pasien
 						</li>
 					</ol>
 				</div>
@@ -28,15 +28,8 @@
 						<h5 class="text-dark font-14 pull-right" style="padding-bottom: 20px;">
 							<u class=" "><b>Tanggal Peayanan : </b> <i>{{ date('d-m-Y') }}</i></u>
 						</h5>
-						<h4 class="m-t-0 header-title"><b>Daftar Antrian Pasien</b></h4>
+						<h4 class="m-t-0 header-title"><b>Data Antrian Pasien</b></h4>
 						<hr>
-						<div class="btn-group m-b-20">
-							<button type="button" class="btn btn-default btn-rounded dropdown-toggle waves-effect waves-light" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus-circle"></i> Tambah Antrian <span class="caret"></span></button>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="#">Pasien Baru</a></li>
-								<li><a href="#">Pasien Lama</a></li>
-							</ul>
-						</div>
 						<table id="datatable" class="table table-striped table-bordered" style="margin-top: 20px;">
 							<thead>
 								<tr>
@@ -48,12 +41,13 @@
 									<th>Jenis Kelamin</th>
 									<th>Poli Tujuan</th>
 									<th>Status</th>
+									<th>Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>1</td>
-									<td>P000564</td>
+									<td>18030302092P000564</td>
 									<td>24-10-2020 07:11</td>
 									<td>A-001</td>
 									<td>Muhammad Aladin</td>
@@ -62,10 +56,14 @@
 									<td>
 										<span class="badge badge-success">Baru</span>
 									</td>
+									<td width="80">
+										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
+										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
+									</td>
 								</tr>
 								<tr>
 									<td>2</td>
-									<td>P000565</td>
+									<td>18030302092P000565</td>
 									<td>24-10-2020 07:25</td>
 									<td>A-002</td>
 									<td>Maemunah</td>
@@ -73,6 +71,10 @@
 									<td>Poli Umum</td>
 									<td>
 										<span class="badge badge-primary">Dipanggil</span>
+									</td>
+									<td width="80">
+										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
+										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
 									</td>
 								</tr>
 							</tbody>

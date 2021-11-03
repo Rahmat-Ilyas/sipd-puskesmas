@@ -9,12 +9,14 @@ use App\Models\User;
 use App\Models\Poli;
 use App\Models\Jadwal;
 use App\Models\Admin;
+use App\Models\Antrian;
 
 class AdminController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:admin');
+        $this->cancelAntrian();
     }
     
     public function home()

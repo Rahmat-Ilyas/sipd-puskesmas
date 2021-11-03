@@ -273,6 +273,7 @@
 
         <script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
         <script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
+        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 
         <script>
             $(document).ready(function () {

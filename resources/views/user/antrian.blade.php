@@ -3,6 +3,7 @@
 @php
 $data = new App\Models\Poli;
 $jadwal = new App\Models\Jadwal;
+$get_antrian = new App\Models\Antrian;
 
 $days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -43,6 +44,8 @@ foreach ($data->where('status_layanan', 'Aktif')->get() as $i => $jdw) {
 		else $status[$i] = "Tutup";
 	} else $status[$i] = "Tutup";
 }
+
+$antrian = $get_antrian->whereDate('created_at', date('Y-m-d'))->where('user_id', Auth::user()->id)->where('status', '!=', 'finish')->where('status', '!=', 'cancel')->first();
 @endphp
 
 <!-- ============================================================== -->
@@ -69,12 +72,34 @@ foreach ($data->where('status_layanan', 'Aktif')->get() as $i => $jdw) {
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="card-box table-responsive">
-						<h4 class="header-title"><b>Pilih Poli & Ambil Antrian</b></h4>
+						<h4 class="header-title"><b>{{ (!$antrian) ? "Pilih Poli & Ambil Antrian" : "Cetak Nomor Antrian" }}</b></h4>
 						<hr>
 						<div class="row">
 							<div class="col-md-3"></div>
 							<div class="col-md-6">
-								<form class="form-horizontal" role="form">                                    
+								@if($antrian)
+								<span>Note: Anda telah mengambil nomor antrian. Silahkan cetak atau download nomor antrian anda di bawah ini.</span>
+								<div class="panel-body m-t-10" style="border: solid #979797 0.2px; border-radius: 10px; background: #979797; color: black;">
+									<div class="text-center">
+										<h2 class="text-white">{{ $data->where('id', $antrian->poli_id)->first()->nama_poli }}</h2>
+										<hr style="margin-top: 10px; margin-bottom: 10px; border: solid #fff 1px;">
+										<h4 style="color: black;"><b>Nomor Antrian Anda</b></h4>
+										<h1 style="color: black;">{{ $antrian->nomor_antrian }}</h1>
+										<span>Tanggal {{ date('d-m-Y') }}</span>
+									</div>
+									<hr style="margin-top: 10px; margin-bottom: 10px;">
+									<div class="m-b-0 text-white text-center">
+										<b>UPT PUSKESMAS BONTONOMPO II</b><br>
+										JLN. BONTOCARADDE, Tamallayang, Bontonompo, Sulawesi Selatan, South Sulawesi 92153
+									</div>
+								</div>
+								<div class="text-center m-t-10">
+									<button class="btn btn-sm btn-rounded btn-success"><i class="fa fa-download"></i> Download No. Antrian</button>
+									<button class="btn btn-sm btn-rounded btn-primary"><i class="fa fa-print"></i> Cetak No. Antrian</button>
+								</div>
+								@else
+								<form class="form-horizontal" method="POST" action="{{ url('user/store/ambilantrian') }}">
+									@csrf
 									<div class="form-group">
 										<label class="">Silahkan Pilih Poli Tujuan</label>
 										<select class="form-control" name="poli_id" required="" id="chg_poli">
@@ -112,10 +137,12 @@ foreach ($data->where('status_layanan', 'Aktif')->get() as $i => $jdw) {
 									</div>
 
 									<div class="form-group text-center">
+										<input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 										<input type="hidden" name="nomor_antrian" id="nomor_antrian">
 										<button type="submit" class="btn btn-primary btn-rounded btn-sm"><i class="fa fa-ticket"></i> Ambil Antrian</button>
 									</div>
 								</form>
+								@endif
 							</div>
 						</div>
 					</div>
@@ -219,6 +246,20 @@ foreach ($data->where('status_layanan', 'Aktif')->get() as $i => $jdw) {
 				$('#nomor_antrian').val('');
 			}
 
+		});
+
+		// Initiate the Pusher JS library
+		Pusher.logToConsole = true;
+		var pusher = new Pusher('a5bf0a9f7538a3e6a68f', {
+			cluster: 'ap1',
+			encrypted: true
+		});
+
+		var channel = pusher.subscribe('ambil-antrian');
+		channel.bind('ambil-antrian', function(data) {
+			var poli_id = $('#chg_poli').val();
+			if (poli_id != '') getAntrian(poli_id);
+			getAntrian();
 		});
 	});
 </script>

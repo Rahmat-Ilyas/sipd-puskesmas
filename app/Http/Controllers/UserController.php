@@ -11,11 +11,14 @@ use App\Models\Jadwal;
 use App\Models\Admin;
 use App\Models\Antrian;
 
+use App\Events\AmbilAntrian;
+
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:user');
+        $this->cancelAntrian();
     }
 
     public function home()
@@ -35,17 +38,27 @@ class UserController extends Controller
 
     public function store(Request $request, $target)
     {
-        // if ($target == 'datadokter') {
-        //     $this->validate($request, [
-        //         'nip' => 'unique:dokter',
-        //     ]);
+        if ($target == 'ambilantrian') {
+            $data = $request->all();
 
-        //     $data = $request->all();
-        //     $data['password'] = bcrypt($request->nip);
-        //     Doctor::create($data);
+            $poli_id = $request->poli_id;
+            $kode = '';
+            $get_poli = Poli::where('status_layanan', 'Aktif')->get();
+            foreach ($get_poli as $i => $pli) {
+                if ($poli_id == $pli->id) {
+                    $kode = range('A', 'Z')[$i];
+                }
+            }
+            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
+            $antrian_poli = count($antrian)+1;
+            $data['nomor_antrian'] = $kode.'-'.sprintf('%03s', $antrian_poli);
+            $data['status'] = 'new';
 
-        //     return back()->with('success', 'Data dokter berhasil ditambahkan');
-        // }
+            Antrian::create($data);
+            event(new AmbilAntrian('rahmat_ryu'));
+
+            return back()->with('success', 'Anda telah mengambil nomor antrian');
+        }
     }
 
     public function update(Request $request, $target)
@@ -80,21 +93,6 @@ class UserController extends Controller
         }
     }
 
-    public function delete($target, $id)
-    {
-        // if ($target == 'datadokter') {
-        //     $dokter = Doctor::where('id', $id)->first();
-        //     $dokter->delete();
-
-        //     return back()->with('success', 'Data dokter berhasil dihapus');
-        // } else if ($target == 'datapoli') {
-        //     $dokter = Poli::where('id', $id)->first();
-        //     $dokter->delete();
-
-        //     return back()->with('success', 'Data poli berhasil dihapus');
-        // }
-    }
-
     public function config(Request $request)
     {
         if ($request->req == 'getAntrian') {
@@ -122,7 +120,15 @@ class UserController extends Controller
 
             if (isset($request->poli_id)) {
                 $poli_id = $request->poli_id;
-                $poli = Poli::where('id', $poli_id)->first();
+                $get_poli = Poli::where('status_layanan', 'Aktif')->get();
+                $poli = [];
+                foreach ($get_poli as $i => $pli) {
+                    if ($poli_id == $pli->id) {
+                        $poli = $pli;
+                        $poli['kode'] = range('A', 'Z')[$i];
+                    }
+                }
+
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
                 $antrian_poli = count($antrian)+1;
 
@@ -132,7 +138,7 @@ class UserController extends Controller
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();
                 $sisa_antrian = count($antrian).' Antrian';
 
-                $antrian_tersedia = range('A', 'Z')[$i].'-'.sprintf('%03s', $antrian_poli);
+                $antrian_tersedia = $poli->kode.'-'.sprintf('%03s', $antrian_poli);
                 $result = [
                     "chg_nama_poli" => $poli->nama_poli,
                     "chg_antrian_tersedia" => $antrian_tersedia,
