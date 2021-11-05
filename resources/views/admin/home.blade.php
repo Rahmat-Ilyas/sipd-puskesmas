@@ -3,6 +3,7 @@
 @php
 $dokter = new App\Models\Doctor;
 $pasien = new App\Models\User;
+$antrian = new App\Models\Antrian;
 @endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -24,7 +25,7 @@ $pasien = new App\Models\User;
 				<div class="col-lg-3 col-sm-6">
 					<div class="widget-panel widget-style-2 bg-white">
 						<i class="fa fa-sort-numeric-asc text-primary"></i>
-						<h2 class="m-0 text-dark counter font-600">30</h2>
+						<h2 class="m-0 text-dark counter font-600">{{ count($antrian->whereDate('created_at', date('Y-m-d'))->get()) }}</h2>
 						<div class="text-muted m-t-5">Antrian Hari Ini</div>
 					</div>
 				</div>

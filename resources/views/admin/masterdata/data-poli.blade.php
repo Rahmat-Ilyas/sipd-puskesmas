@@ -140,7 +140,7 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 								}
 								@endphp
 							</select>
-							<small class="text-warning">Gunakan Kode Poli yang digenerate otomatis untuk login ke dashboard Poli dan Password default adalah <b>12345</b></small>
+							{{-- <small class="text-warning">Gunakan Kode Poli yang digenerate otomatis untuk login ke dashboard Poli dan Password default adalah <b>12345</b></small> --}}
 						</div>
 					</div>
 					<div class="form-group row">
@@ -217,13 +217,13 @@ foreach ($get_dokter->where('status_pegawai', 'Aktif')->get() as $dtr) {
 							</select>
 						</div>
 					</div>
-					<div class="form-group row">
+					{{-- <div class="form-group row">
 						<label class="col-sm-3 col-form-label">Password</label>
 						<div class="col-sm-9">
 							<input type="text" name="password" class="form-control" placeholder="Password.." autocomplete="off">
 							<small class="text-warning">Masukkan Password baru untuk mengganti password</small>
 						</div>
-					</div>
+					</div> --}}
 					<div class="form-group row">
 						<div class="col-sm-3"></div>
 						<div class="col-sm-9">

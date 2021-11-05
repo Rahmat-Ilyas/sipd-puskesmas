@@ -92,32 +92,26 @@
                         	<li class="text-muted menu-title">Main Menu</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('doctor/') }}" class="waves-effect"><i class="ti-home"></i> <span> Dashboard </span></a>
+                                <a href="{{ url('doctor/') }}" class="waves-effect"><i class="fa fa-home"></i> <span> Dashboard </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('doctor/pemeriksaan') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Staf Ruang Pemeriksaan </span></a>
+                                <a href="{{ url('doctor/antrian') }}" class="waves-effect"><i class="fa fa-sort-numeric-asc"></i> <span> Antrian Pasien </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="javascript:void(0);" class="waves-effect"><i class="ti-archive"></i> <span> Master Data </span> <span class="menu-arrow"></span> </a>
-                                <ul class="list-unstyled">
-                                    <li><a href="{{ url('doctor/masterdata/data-pasien') }}">Data Pasien</a></li>
-                                    <li><a href="{{ url('doctor/masterdata/rekam-medik') }}">Data Rekam Medik</a></li>
-                                    <li><a href="{{ url('doctor/masterdata/data-dokter') }}">Data Dokter</a></li>
-                                    <li><a href="{{ url('doctor/masterdata/data-poli') }}">Data Poli</a></li>
-                                </ul>
+                                <a href="{{ url('doctor/antrian') }}" class="waves-effect"><i class="fa fa-wheelchair"></i> <span> Data Pasien </span></a>
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('doctor/jadwal') }}" class="waves-effect"><i class="ti-time"></i> <span> Jadwal </span></a>
+                                <a href="{{ url('doctor/jadwal') }}" class="waves-effect"><i class="fa fa-history"></i> <span> Riwayat Pemeriksaan </span></a>
                             </li>
+
+                            <li class="text-muted menu-title">Data Diri & Akun</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('doctor/laporan') }}" class="waves-effect"><i class="ti-files"></i> <span> Laporan </span></a>
+                                <a href="{{ url('doctor/laporan') }}" class="waves-effect"><i class="ti-user"></i> <span> Data Diri </span></a>
                             </li>
-
-                            <li class="text-muted menu-title">Pengaturan Akun</li>
 
                             <li class="has_sub">
                                 <a href="{{ url('doctor/akun') }}" class="waves-effect"><i class="ti-user"></i> <span> Akun </span></a>

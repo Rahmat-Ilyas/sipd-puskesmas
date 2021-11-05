@@ -163,7 +163,7 @@ $data = new App\Models\Doctor;
 								}
 								@endphp
 							</select>
-							{{-- <small class="text-warning">Password default untuk login dokter sama dengan NIP yang terdaftar</small> --}}
+							<small class="text-warning">Password default untuk login dokter sama dengan NIP yang terdaftar</small>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -259,13 +259,13 @@ $data = new App\Models\Doctor;
 							</select>
 						</div>
 					</div>
-					{{-- <div class="form-group row">
+					<div class="form-group row">
 						<label class="col-sm-3 col-form-label">Password</label>
 						<div class="col-sm-9">
 							<input type="text" name="password" class="form-control" placeholder="Password.." autocomplete="off">
 							<small class="text-warning">Masukkan Password baru untuk mengganti password</small>
 						</div>
-					</div> --}}
+					</div>
 					<div class="form-group row">
 						<div class="col-sm-3"></div>
 						<div class="col-sm-9">

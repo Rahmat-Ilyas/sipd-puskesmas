@@ -23,6 +23,8 @@
     <link href="{{ asset('assets/plugins/datatables/dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/plugins/datatables/fixedColumns.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
 
+    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/core.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/components.css') }}" rel="stylesheet" type="text/css" />
@@ -104,7 +106,7 @@
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/antrian') }}" class="waves-effect"><i class="ti-agenda"></i> <span> Daftar Antrian Pasien </span></a>
+                                <a href="{{ url('admin/antrian') }}" class="waves-effect daftar-antrian"><i class="ti-agenda"></i> <span> Daftar Antrian Pasien </span></a>
                             </li>
 
                             <li class="has_sub">
@@ -118,11 +120,19 @@
                             </li>
 
                             <li class="has_sub">
+                                <a href="{{ url('admin/riwayat') }}" class="waves-effect"><i class="ti-reload"></i> <span> Riwayat Pasien </span></a>
+                            </li>
+
+                            <li class="has_sub">
                                 <a href="{{ url('admin/jadwal') }}" class="waves-effect"><i class="ti-time"></i> <span> Jadwal </span></a>
                             </li>
 
                             <li class="has_sub">
                                 <a href="{{ url('admin/laporan') }}" class="waves-effect"><i class="ti-files"></i> <span> Laporan </span></a>
+                            </li>
+
+                            <li class="has_sub">
+                                <a href="{{ url('admin/display-antrian') }}" target="_blank" class="waves-effect"><i class="fa fa-desktop"></i> <span> Tampilkan Antrian </span></a>
                             </li>
 
                             <li class="text-muted menu-title">Pengaturan Akun</li>
@@ -236,6 +246,8 @@
         <!-- jQuery  -->
         <script src="{{ asset('assets/plugins/moment/moment.js') }}"></script>
 
+        <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+
         {{-- Data Table --}}
         <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/datatables/dataTables.bootstrap.js') }}"></script>
@@ -274,10 +286,12 @@
 
         <script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
         <script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
+        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 
         <script>
             $(document).ready(function () {
                 $('#datatable').dataTable();
+                $(".select2").select2();
                 $(document).tooltip({ selector: '[data-toggle1="tooltip"]' });
 
                 $('#btn-edit-akun').click(function(event) {

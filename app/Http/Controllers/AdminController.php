@@ -11,6 +11,8 @@ use App\Models\Jadwal;
 use App\Models\Admin;
 use App\Models\Antrian;
 
+use App\Events\AmbilAntrian;
+
 class AdminController extends Controller
 {
     public function __construct()
@@ -53,6 +55,42 @@ class AdminController extends Controller
             Poli::create($data);
 
             return back()->with('success', 'Data poli baru berhasil ditambahkan');
+        } else if ($target == 'pasien') {
+            $this->validate($request, [
+                'nik' => 'unique:user',
+            ]);
+
+            $user = User::orderBy('id', 'desc')->first();
+            $rekam_medik = $user ? $user->id+1 : 1;
+
+            $data = $request->all();
+            $data['no_rekam_medik'] = 'P'.sprintf('%06s', $rekam_medik);
+            $data['password'] = bcrypt($request->password);
+
+            $user = User::create($data);
+
+            return redirect('admin/ambil-antrian')->with('success', 'Pasien baru berhasil di daftar, silahkan ambil antrian')->with('user_id', $user->id);
+
+        } else if ($target == 'antrian') {
+            $data = $request->all();
+
+            $poli_id = $request->poli_id;
+            $kode = '';
+            $get_poli = Poli::where('status_layanan', 'Aktif')->get();
+            foreach ($get_poli as $i => $pli) {
+                if ($poli_id == $pli->id) {
+                    $kode = range('A', 'Z')[$i];
+                }
+            }
+            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
+            $antrian_poli = count($antrian)+1;
+            $data['nomor_antrian'] = $kode.'-'.sprintf('%03s', $antrian_poli);
+            $data['status'] = 'new';
+
+            Antrian::create($data);
+            event(new AmbilAntrian('rahmat_ryu'));
+
+            return redirect('admin/antrian')->with('success', 'Nomor Antrian baru telah ditambahkan');
         } 
     }
 
@@ -147,6 +185,59 @@ class AdminController extends Controller
             $dokter->delete();
 
             return back()->with('success', 'Data poli berhasil dihapus');
+        }
+    }
+
+    public function config(Request $request)
+    {
+        if ($request->req == 'getAntrian') {
+            if ($request->poli_id == 'all') 
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->orderBy('nomor_antrian', 'asc')->get();
+            else
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->orderBy('nomor_antrian', 'asc')->where('poli_id', $request->poli_id)->get();
+            $result = '';
+            foreach ($antrian as $i => $dta) {
+                $result .= '
+                <tr>
+                <td>'.($i+1).'</td>
+                <td>'.date('d-m-Y H:i',  strtotime($dta->created_at)).'</td>
+                <td>'.$dta->nomor_antrian.'</td>
+                <td>'.$dta->user->no_rekam_medik.'</td>
+                <td>'.$dta->user->nama.'</td>
+                <td>'.$dta->poli->nama_poli.'</td>
+                <td>
+                <span class="badge badge-success">'.$dta->status.'</span>
+                </td>
+                </tr>';
+            }
+            
+            return response()->json($result, 200);
+        } else if ($request->req == 'getAntrianLast') {
+            $poli = Poli::where('status_layanan', 'Aktif')->get();
+
+            $result = '';
+            $poli_id = $request->poli_id;
+            $get_poli = Poli::where('status_layanan', 'Aktif')->get();
+            $kode = '';
+            foreach ($get_poli as $i => $pli) {
+                if ($poli_id == $pli->id) {
+                    $kode = range('A', 'Z')[$i];
+                }
+            }
+
+            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
+            $antrian_poli = count($antrian)+1;
+
+            $antrian_tersedia = $kode.'-'.sprintf('%03s', $antrian_poli);
+            $result = $antrian_tersedia;
+
+            return response()->json($result, 200);
+        } else if ($request->req == 'cekAntrian') {
+            $result = false;
+            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('user_id', $request->user_id)->where('status', '!=', 'finish')->where('status', '!=', 'cancel')->first();
+            if ($antrian) $result = true;
+
+            return response()->json($result, 200);
         }
     }
 }
