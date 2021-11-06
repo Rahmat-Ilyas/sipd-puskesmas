@@ -48,6 +48,22 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/{dir}/{page}', 'AdminController@pagedir');
 });
 
+// Doctor
+Route::group(['prefix' => 'doctor'], function () {
+    Route::get('/login', 'Auth\AuthDoctorController@showLoginForm')->name('doctor.login');
+    Route::post('/login', 'Auth\AuthDoctorController@login')->name('doctor.login.submit');
+    Route::get('/logout', 'Auth\AuthDoctorController@logout')->name('doctor.logout');
+    Route::get('/', 'DoctorController@home')->name('doctor.home');
+
+    Route::post('/config', 'DoctorController@config');
+    Route::post('/store/{target}', 'DoctorController@store');
+    Route::post('/update/{target}', 'DoctorController@update');
+    Route::get('/delete/{target}/{id}', 'DoctorController@delete');
+
+    Route::get('/{page}', 'DoctorController@page');
+    Route::get('/{dir}/{page}', 'DoctorController@pagedir');
+});
+
 // Poli
 Route::group(['prefix' => 'poli'], function () {
     Route::get('/login', 'Auth\AuthPoliController@showLoginForm')->name('poli.login');
@@ -57,15 +73,4 @@ Route::group(['prefix' => 'poli'], function () {
 
     Route::get('/{page}', 'PoliController@page');
     Route::get('/{dir}/{page}', 'PoliController@pagedir');
-});
-
-// Doctor
-Route::group(['prefix' => 'doctor'], function () {
-    Route::get('/login', 'Auth\AuthDoctorController@showLoginForm')->name('doctor.login');
-    Route::post('/login', 'Auth\AuthDoctorController@login')->name('doctor.login.submit');
-    Route::get('/logout', 'Auth\AuthDoctorController@logout')->name('doctor.logout');
-    Route::get('/', 'DoctorController@home')->name('doctor.home');
-
-    Route::get('/{page}', 'DoctorController@page');
-    Route::get('/{dir}/{page}', 'DoctorController@pagedir');
 });

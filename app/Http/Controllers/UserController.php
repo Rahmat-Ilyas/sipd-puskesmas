@@ -76,7 +76,7 @@ class UserController extends Controller
             }
             $user->save();
 
-            return back()->with('success', 'Data dokter berhasil diupdate');
+            return back()->with('success', 'Data diri anda berhasil diupdate');
         } else if ($target == 'akun') {
             $akun = User::where('id', $request->id)->first();
             if ($request->password == '') $except = ['_token', 'id', 'password'];

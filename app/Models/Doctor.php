@@ -14,4 +14,9 @@ class Doctor extends Authenticatable
     protected $table = 'dokter';
     protected $guard = 'doctor';
     protected $guarded = [];
+
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class);
+    }
 }
