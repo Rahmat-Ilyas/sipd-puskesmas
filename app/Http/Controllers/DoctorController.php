@@ -10,8 +10,10 @@ use App\Models\Poli;
 use App\Models\Jadwal;
 use App\Models\Admin;
 use App\Models\Antrian;
+use App\Models\Pemeriksaan;
 
 use App\Events\AmbilAntrian;
+use App\Events\PanggilAntrian;
 
 class DoctorController extends Controller
 {
@@ -33,6 +35,26 @@ class DoctorController extends Controller
     public function pagedir($dir = NULL, $page)
     {
         return view('doctor/'.$dir.'/'.$page);
+    }
+
+    public function store(Request $request, $target)
+    {
+        if ($target == 'pemeriksaan') {
+            $data = $request->all();
+            $data['tggl_pemeriksaan'] = date('Y-m-d H:i:s');
+            ($data['prb']) ? $data['prb'] : $data['prb'] = '';
+            ($data['prolanis']) ? $data['prolanis'] : $data['prolanis'] = '';
+            unset($data['antrian_id']);
+            Pemeriksaan::create($data);
+
+            $antrian = Antrian::where('id', $request->antrian_id)->first();
+            $antrian->status = 'finish';
+            $antrian->save();
+
+            event(new AmbilAntrian('rahmat_ryu'));
+
+            return redirect('doctor/antrian-pasien')->with('success', 'Data pemeriksaan berhasil disimpan');
+        }
     }
 
     public function update(Request $request, $target)
@@ -116,10 +138,11 @@ class DoctorController extends Controller
 
 
             if ($request->status == 'calling') {
-                
+                $poli = Poli::where('id', $updt->poli_id)->first();
+                event(new PanggilAntrian($updt->nomor_antrian, $poli->nama_poli));                
             }
 
-            return response()->json($updt->user_id, 200);
+            return response()->json(true, 200);
         }
     }
 }

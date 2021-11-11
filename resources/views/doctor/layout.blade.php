@@ -117,7 +117,7 @@ if (count($cek_poli) == 1) {
                             </li>
                             @if (count($cek_poli) > 0)
                             <li class="has_sub">
-                                <a href="{{ url('doctor/antrian-pasien') }}" class="waves-effect"><i class="fa fa-sort-numeric-asc"></i> <span> Antrian Pasien </span></a>
+                                <a href="{{ url('doctor/antrian-pasien') }}" class="waves-effect antrian-pasien"><i class="fa fa-sort-numeric-asc"></i> <span> Antrian Pasien </span></a>
                             </li>
                             @endif
 

@@ -523,6 +523,7 @@ class ComposerStaticInit2f4a0a258a41b2378aca1a260814f754
 
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Events\\AmbilAntrian' => __DIR__ . '/../..' . '/app/Events/AmbilAntrian.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\Auth\\AuthAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthAdminController.php',
@@ -546,6 +547,7 @@ class ComposerStaticInit2f4a0a258a41b2378aca1a260814f754
         'App\\Models\\Antrian' => __DIR__ . '/../..' . '/app/Models/Antrian.php',
         'App\\Models\\Doctor' => __DIR__ . '/../..' . '/app/Models/Doctor.php',
         'App\\Models\\Jadwal' => __DIR__ . '/../..' . '/app/Models/Jadwal.php',
+        'App\\Models\\Pemeriksaan' => __DIR__ . '/../..' . '/app/Models/Pemeriksaan.php',
         'App\\Models\\Poli' => __DIR__ . '/../..' . '/app/Models/Poli.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

@@ -83,7 +83,6 @@ $poli = $poli->where('id', $poli_id)->first();
 			"X-CSRF-TOKEN" : "{{ csrf_token() }}"
 		}
 
-
 		getAntrian();
 		function getAntrian(poli_id) {
 			var poli_id = "{{ $poli->id }}";
@@ -120,7 +119,7 @@ $poli = $poli->where('id', $poli_id)->first();
 				},
 				success : function(data) {
 					if (status == 'proccess') 
-						location.href="{{ url('/doctor/pemeriksaan-pasien/') }}?pasien_id="+data
+						location.href="{{ url('/doctor/pemeriksaan-pasien/') }}?antrian_id="+id
 					else
 						getAntrian();
 				}

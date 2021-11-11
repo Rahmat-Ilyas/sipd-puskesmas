@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
+    'App\\Events\\AmbilAntrian' => $baseDir . '/app/Events/AmbilAntrian.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\AdminController' => $baseDir . '/app/Http/Controllers/AdminController.php',
     'App\\Http\\Controllers\\Auth\\AuthAdminController' => $baseDir . '/app/Http/Controllers/Auth/AuthAdminController.php',
@@ -30,6 +31,7 @@ return array(
     'App\\Models\\Antrian' => $baseDir . '/app/Models/Antrian.php',
     'App\\Models\\Doctor' => $baseDir . '/app/Models/Doctor.php',
     'App\\Models\\Jadwal' => $baseDir . '/app/Models/Jadwal.php',
+    'App\\Models\\Pemeriksaan' => $baseDir . '/app/Models/Pemeriksaan.php',
     'App\\Models\\Poli' => $baseDir . '/app/Models/Poli.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
