@@ -103,7 +103,10 @@ class UserController extends Controller
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->get();
                 $antrian_poli = count($antrian)+1;
 
-                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', 'proccess')->first();
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)
+                ->where(function($q) {
+                    return $q->where('status', 'proccess')->orWhere('status', 'calling');
+                })->first();
                 $antrian_dilayani = ($antrian) ? $antrian->nomor_antrian : '--';
 
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();
@@ -132,7 +135,10 @@ class UserController extends Controller
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->get();
                 $antrian_poli = count($antrian)+1;
 
-                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->where('status', 'proccess')->first();
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)
+                ->where(function($q) {
+                    return $q->where('status', 'proccess')->orWhere('status', 'calling');
+                })->first();
                 $antrian_dilayani = ($antrian) ? $antrian->nomor_antrian : '--';
 
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $poli_id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();

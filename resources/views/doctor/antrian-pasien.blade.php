@@ -2,8 +2,12 @@
 @section('content')
 @php
 $poli = new App\Models\Poli;
-$dokter_id = Auth::user()->id;
-$poli = $poli->where('dokter_id', $dokter_id)->first();
+$poli_id = session('poli_id');
+if (!$poli_id) {
+	header('location: '.url('doctor/home'));
+	exit();
+}
+$poli = $poli->where('id', $poli_id)->first();
 @endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -45,38 +49,11 @@ $poli = $poli->where('dokter_id', $dokter_id)->first();
 									<th>No. Rekam Medik</th>
 									<th>Nama Pasien</th>
 									<th>Status</th>
-									<th>Aksi</th>
+									<th width="150">Aksi</th>
 								</tr>
 							</thead>
 							<tbody id="data-antrian">
-								<tr>
-									<td>1</td>
-									<td>24-10-2020 07:11</td>
-									<td>A-001</td>
-									<td>P000564</td>
-									<td>Muhammad Aladin</td>
-									<td>
-										<span class="badge badge-success">Baru</span>
-									</td>
-									<td width="80">
-										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
-										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
-									</td>
-								</tr>
-								<tr>
-									<td>2</td>
-									<td>24-10-2020 07:25</td>
-									<td>A-002</td>
-									<td>P000565</td>
-									<td>Maemunah</td>
-									<td>
-										<span class="badge badge-primary">Dipanggil</span>
-									</td>
-									<td width="80">
-										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
-										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
-									</td>
-								</tr>
+								
 							</tbody>
 						</table>
 					</div>
@@ -124,6 +101,36 @@ $poli = $poli->where('dokter_id', $dokter_id)->first();
 				}
 			});
 		}
+
+		$(document).on('click', '.proses', function(event) {
+			var id = $(this).attr('data-id');
+			var status = $(this).attr('data-status');
+
+			$(this).attr('disabled', '');
+			$(this).find('.fa').removeClass('fa-volume-up').addClass('fa-spinner fa-spin');
+			
+			$.ajax({
+				url     : url,
+				method  : "POST",
+				headers : headers,
+				data 	: { 
+					req: 'updateAntrian',
+					id: id,
+					status: status,
+				},
+				success : function(data) {
+					if (status == 'proccess') 
+						location.href="{{ url('/doctor/pemeriksaan-pasien/') }}?pasien_id="+data
+					else
+						getAntrian();
+				}
+			});
+		});
+		
+		$(document).on('click', '.disabled', function(event) {
+			event.preventDefault();
+			$.Notification.autoHideNotify('warning', 'top right', 'Tidak dapat diproses','Mohon proses antrian sesuai urutan');
+		});
 
 		// Initiate the Pusher JS library
 		Pusher.logToConsole = true;

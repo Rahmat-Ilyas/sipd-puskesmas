@@ -43,7 +43,8 @@ class AuthDoctorController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('doctor')->logout();
-
+        
+        session()->forget('poli_id');
         $request->session()->invalidate();
 
         return redirect('/doctor');

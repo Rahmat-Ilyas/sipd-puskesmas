@@ -1,7 +1,14 @@
 @php
 $poli = new App\Models\Poli;
 $dokter_id = Auth::user()->id;
-$cek_poli = $poli->where('dokter_id', $dokter_id)->first();
+$cek_poli = $poli->where('dokter_id', $dokter_id)->where('status_layanan', 'Aktif')->get();
+
+if (count($cek_poli) == 1) {
+    $this_poli = $poli->where('dokter_id', $dokter_id)->where('status_layanan', 'Aktif')->first();
+    session()->put('poli_id', $this_poli->id);
+} else if (count($cek_poli) <= 0) {
+    session()->forget('poli_id');
+}
 @endphp
 <!DOCTYPE html>
 <html>
@@ -108,7 +115,7 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
                             <li class="has_sub">
                                 <a href="{{ url('doctor/') }}" class="waves-effect"><i class="fa fa-home"></i> <span> Dashboard </span></a>
                             </li>
-                            @if ($cek_poli)
+                            @if (count($cek_poli) > 0)
                             <li class="has_sub">
                                 <a href="{{ url('doctor/antrian-pasien') }}" class="waves-effect"><i class="fa fa-sort-numeric-asc"></i> <span> Antrian Pasien </span></a>
                             </li>
@@ -122,10 +129,16 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
                                 <a href="{{ url('doctor/riwayat') }}" class="waves-effect"><i class="fa fa-history"></i> <span> Riwayat Pemeriksaan </span></a>
                             </li>
 
+                            @if (count($cek_poli) > 1)
+                            <li class="has_sub">
+                                <a href="#" class="waves-effect" data-toggle="modal" data-target=".modal-pilih-poli"><i class="fa fa-refresh"></i> <span> Pilih Poli </span></a>
+                            </li>
+                            @endif
+
                             <li class="text-muted menu-title">Data Diri & Akun</li>
 
                             <li class="has_sub">
-                                <a href="{{ url('doctor/data-diri') }}" class="waves-effect"><i class="ti-user"></i> <span> Data Diri </span></a>
+                                <a href="{{ url('doctor/data-diri') }}" class="waves-effect"><i class="ti-id-badge"></i> <span> Data Diri </span></a>
                             </li>
 
                             <li class="has_sub">
@@ -149,6 +162,7 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
         </div>
         <!-- END wrapper -->
 
+        {{-- Modal edit akun --}}
         <div class="modal modal-akun" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -203,6 +217,23 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
                             <button type="" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Tutup</button>                            
                             <button type="button" class="btn btn-primary" id="btn-edit-akun">Edit Akun</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal pilih poli --}}
+        <div class="modal modal-pilih-poli" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Pilih Poli Anda</h4>
+                    </div>
+                    <div class="modal-body" style="padding-bottom: 0px;">
+                        <span>Akun anda terkait dengan {{ count($cek_poli) }} poli yang berbeda. Silahkan pilih dan masuk di salah satu poli berikut:</span><br><br>
+                        @foreach ($cek_poli as $cpl)
+                        <button type="button" class="btn btn-primary btn-lg btn-block m-b-20 chage-poli" data-id="{{ $cpl->id }}">{{ strtoupper($cpl->nama_poli) }}</button>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -270,6 +301,12 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
 
         <script>
             $(document).ready(function () {
+                var url = "{{ url('doctor/config') }}";
+                var headers = {
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN" : "{{ csrf_token() }}"
+                }
+
                 $('#datatable').dataTable();
                 $(document).tooltip({ selector: '[data-toggle1="tooltip"]' });
 
@@ -294,6 +331,33 @@ $cek_poli = $poli->where('dokter_id', $dokter_id)->first();
                 $.Notification.autoHideNotify('error', 'top right', 'Terjadi Kesalahn','{{ $error }}');
                 @endforeach
                 @endif
+
+                @if (count($cek_poli) > 1 && !session('poli_id'))
+                $('.modal-pilih-poli').modal({ backdrop: 'static', keyboard: false });
+                $('.modal-pilih-poli').modal('show');
+                @endif
+
+                $('.chage-poli').click(function(event) {
+                    var id = $(this).attr('data-id');
+                    setSessionPoli(id);
+
+                });
+
+                function setSessionPoli(poli_id) {
+                    $.ajax({
+                        url     : url,
+                        method  : "POST",
+                        headers : headers,
+                        data    : { 
+                            req: 'setSessionPoli',
+                            poli_id: poli_id
+                        },
+                        success : function(data) {
+                            // $('.modal-pilih-poli').modal('hide');
+                            location.href=window.location.href;
+                        }
+                    });
+                }
             });
         </script>
         @yield('javascript')

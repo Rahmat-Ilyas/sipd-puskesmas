@@ -11,6 +11,8 @@ use App\Models\Jadwal;
 use App\Models\Admin;
 use App\Models\Antrian;
 
+use App\Events\AmbilAntrian;
+
 class DoctorController extends Controller
 {
     public function __construct()
@@ -68,9 +70,22 @@ class DoctorController extends Controller
     public function config(Request $request)
     {
         if ($request->req == 'getAntrian') {
-            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->orderBy('nomor_antrian', 'asc')->where('poli_id', $request->poli_id)->get();
+            $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $request->poli_id)->where('status', '!=', 'finish')->orderByRaw("FIELD(status, 'new', 'skip') asc")->orderBy('nomor_antrian', 'asc')->get();
             $result = '';
             foreach ($antrian as $i => $dta) {
+                if ($dta->status == 'new' || $dta->status == 'skip') $proses = '';
+                else $proses = '<button class="m-t-10 btn btn-sm btn-primary proses" data-toggle1="tooltip" title="Lanjutkan Pemeriksaan Pasien" data-id="'.$dta->id.'" data-status="proccess"><i class="fa fa-stethoscope"></i> Lanjutkan Pemeriksaan</button>';
+
+                if ($i == 0) $disabled = '';
+                else $disabled = 'disabled';
+
+                if ($dta->status == 'new') $color = 'default';
+                elseif ($dta->status == 'calling') $color = 'info';
+                elseif ($dta->status == 'skip') $color = 'warning';
+                elseif ($dta->status == 'proccess') $color = 'primary';
+                elseif ($dta->status == 'finish') $color = 'success';
+                elseif ($dta->status == 'cancel') $color = 'danger';
+
                 $result .= '
                 <tr>
                 <td>'.($i+1).'</td>
@@ -79,17 +94,32 @@ class DoctorController extends Controller
                 <td>'.$dta->user->no_rekam_medik.'</td>
                 <td>'.$dta->user->nama.'</td>
                 <td>
-                <span class="badge badge-success">'.$dta->status.'</span>
+                <span class="badge badge-'.$color.'">'.$dta->status.'</span>
                 </td>
                 <td class="text-center">
-                <button class="btn btn-sm btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
-                <button class="btn btn-sm btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
-                <button class="m-t-10 btn btn-sm btn-primary"><i class="fa fa-stethoscope"></i> Lanjutkan Pemeriksaan</button>
+                <button class="btn btn-sm btn-success '.$disabled.' proses" data-toggle1="tooltip" title="Panggil Antrian" data-id="'.$dta->id.'" data-status="calling"><i class="fa fa-volume-up"></i> Panggil</button>
+                <button class="btn btn-sm btn-danger '.$disabled.' proses" data-toggle1="tooltip" title="Lewati Antrian" data-id="'.$dta->id.'" data-status="skip"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
+                '.$proses.'
                 </td>
                 </tr>';
             }
             
             return response()->json($result, 200);
+        } else if ($request->req == 'setSessionPoli') {
+            session()->put('poli_id', $request->poli_id);
+            return response()->json(true, 200);
+        } else if ($request->req == 'updateAntrian') {
+            $updt = Antrian::where('id', $request->id)->first();
+            $updt->status = $request->status;
+            $updt->save();
+            event(new AmbilAntrian('rahmat_ryu'));
+
+
+            if ($request->status == 'calling') {
+                
+            }
+
+            return response()->json($updt->user_id, 200);
         }
     }
 }

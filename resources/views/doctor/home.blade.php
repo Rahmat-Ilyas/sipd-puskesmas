@@ -2,8 +2,8 @@
 @section('content')
 @php
 $poli = new App\Models\Poli;
-$dokter_id = Auth::user()->id;
-$nama_poli = $poli->where('dokter_id', $dokter_id)->first();
+$poli_id = session('poli_id');
+$nama_poli = $poli->where('id', $poli_id)->first();
 $nama_poli = $nama_poli ? $nama_poli->nama_poli : 'Selamat Datang';
 @endphp
 <!-- ============================================================== -->

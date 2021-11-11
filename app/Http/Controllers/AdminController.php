@@ -197,6 +197,13 @@ class AdminController extends Controller
                 $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->orderBy('nomor_antrian', 'asc')->where('poli_id', $request->poli_id)->get();
             $result = '';
             foreach ($antrian as $i => $dta) {
+                if ($dta->status == 'new') $color = 'default';
+                elseif ($dta->status == 'calling') $color = 'info';
+                elseif ($dta->status == 'skip') $color = 'warning';
+                elseif ($dta->status == 'proccess') $color = 'primary';
+                elseif ($dta->status == 'finish') $color = 'success';
+                elseif ($dta->status == 'cancel') $color = 'danger';
+                
                 $result .= '
                 <tr>
                 <td>'.($i+1).'</td>
@@ -206,7 +213,7 @@ class AdminController extends Controller
                 <td>'.$dta->user->nama.'</td>
                 <td>'.$dta->poli->nama_poli.'</td>
                 <td>
-                <span class="badge badge-success">'.$dta->status.'</span>
+                <span class="badge badge-'.$color.'">'.$dta->status.'</span>
                 </td>
                 </tr>';
             }
