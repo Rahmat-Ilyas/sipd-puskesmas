@@ -3,6 +3,10 @@
 @php
 $poli = new App\Models\Poli;
 $poli_id = session('poli_id');
+if (!$poli_id) {
+	$get_poli = $poli->where('dokter_id', Auth::user()->id)->first();
+	$poli_id = ($get_poli) ? $get_poli->id : 0;
+}
 $nama_poli = $poli->where('id', $poli_id)->first();
 $nama_poli = $nama_poli ? $nama_poli->nama_poli : 'Selamat Datang';
 
