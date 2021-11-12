@@ -195,7 +195,7 @@ $data = new App\Models\User;
 	</div>
 </div>
 
-<!-- MODAL HAPUS -->
+<!-- MODAL DETAIL -->
 <div class="modal modal-detail{{ $dta->id }}" tabindex="-1" role="dialog" aria-labelledby="staticModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">

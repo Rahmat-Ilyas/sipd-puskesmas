@@ -17,7 +17,9 @@ class CreatePemeriksaansTable extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('dokter_id');
+            $table->integer('poli_id');
             $table->datetime('tggl_pemeriksaan');
+            $table->text('keluhan');
             $table->text('diagnosis');
             $table->string('status_pulang');
             $table->string('prb');

@@ -77,6 +77,10 @@ $user = $user->where('id', $antrian->user_id)->first();
 									<form class="m-t-20" method="POST" action="{{ url('doctor/store/pemeriksaan') }}">
 										@csrf
 										<div class="form-group">
+											<label>Keluhan Pasien</label>
+											<textarea name="keluhan" class="form-control" required="" placeholder="Keluhan Pasien.." rows="5"></textarea>
+										</div>
+										<div class="form-group">
 											<label>Diagnosis Pasien</label>
 											<textarea name="diagnosis" class="form-control" required="" placeholder="Diagnosis Pasien.." rows="5"></textarea>
 										</div>
@@ -103,6 +107,7 @@ $user = $user->where('id', $antrian->user_id)->first();
 										<div class="text-center">
 											<input type="hidden" name="user_id" value="{{ $user->id }}">
 											<input type="hidden" name="dokter_id" value="{{ Auth::user()->id }}">
+											<input type="hidden" name="poli_id" value="{{ $antrian->poli_id }}">
 											<input type="hidden" name="antrian_id" value="{{ $antrian_id }}">
 											<button type="submit" class="btn btn-default">Selesaikan Pemeriksaan</button>
 										</div>

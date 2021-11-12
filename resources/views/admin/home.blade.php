@@ -4,6 +4,8 @@
 $dokter = new App\Models\Doctor;
 $pasien = new App\Models\User;
 $antrian = new App\Models\Antrian;
+$pemeriksaan = new App\Models\Pemeriksaan;
+$pemeriksaan = $pemeriksaan->whereMonth('created_at', date('m'))->groupBy('user_id')->get(['user_id']);
 @endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -32,7 +34,7 @@ $antrian = new App\Models\Antrian;
 				<div class="col-lg-3 col-sm-6">
 					<div class="widget-panel widget-style-2 bg-white">
 						<i class="fa fa-wheelchair text-pink"></i>
-						<h2 class="m-0 text-dark counter font-600">210</h2>
+						<h2 class="m-0 text-dark counter font-600">{{ count($pemeriksaan) }}</h2>
 						<div class="text-muted m-t-5">Pasien Bulan Ini</div>
 					</div>
 				</div>

@@ -1,8 +1,8 @@
-@extends('admin.layout')
+@extends('doctor.layout')
 @section('content')
 @php
-$get_pasien = new App\Models\Pemeriksaan;
-$pasien = $get_pasien->groupBy('user_id')->orderBy('user_id', 'asc')->get(['user_id']);
+$get_pemeriksaan = new App\Models\Pemeriksaan;
+$pemeriksaan = $get_pemeriksaan->where('dokter_id', Auth::user()->id)->groupBy('user_id')->get(['user_id']);
 @endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -17,9 +17,6 @@ $pasien = $get_pasien->groupBy('user_id')->orderBy('user_id', 'asc')->get(['user
 					<ol class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
-						</li>
-						<li>
-							<a href="#">Master Data</a>
 						</li>
 						<li class="active">
 							Data Pasien
@@ -41,26 +38,28 @@ $pasien = $get_pasien->groupBy('user_id')->orderBy('user_id', 'asc')->get(['user
 									<th>No. Rek Medik</th>
 									<th>Nama Lengkap</th>
 									<th>Jenis Kelamin</th>
-									<th>Jaminan Kesehatan</th>
+									<th>Tempat & Tggl Lahir</th>
 									<th>Jumlah Kunjungan</th>
-									<th width="170">Aksi</th>
+									<th width="140">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
-								@foreach ($pasien as $i => $dta)
+								@foreach ($pemeriksaan as $i => $dta)
 								@php
-								$kunjungan = $get_pasien->where('user_id', $dta->user->id)->get();
+								$kunjungan = $get_pemeriksaan->where('user_id', $dta->user->id)->get();
 								@endphp
 								<tr>
 									<td>{{ (int)$i + 1 }}</td>
 									<td>{{ $dta->user->no_rekam_medik }}</td>
 									<td>{{ $dta->user->nama }}</td>
 									<td>{{ $dta->user->jenis_kelamin }}</td>
-									<td>{{ $dta->user->jaminan_kesehatan }}</td>
+									<td>
+										{{ $dta->user->tempat_lahir.', '.date('d/m/Y', strtotime($dta->user->tanggal_lahir)) }}
+									</td>
 									<td>{{ count($kunjungan) }}x berkunjung</td>
 									<td class="text-center">
 										<button class="btn btn-sm btn-info" data-toggle="modal" data-target=".modal-detail{{ $dta->user->id }}" data-toggle1="tooltip" title="Detail Pasien"><i class="fa fa-list"></i> Detail</button>
-										<button class="btn btn-sm btn-primary" data-toggle="modal" data-target=".modal-rekam-medik{{ $dta->user->id }}" data-toggle1="tooltip" title="Lihat Rekam Medik"><i class="fa fa-stethoscope"></i> Rekam Medik</button>
+										<button class="btn btn-sm btn-primary" data-toggle="modal" data-target=".modal-rekam-medik{{ $dta->user->id }}" data-toggle1="tooltip" title="Lihat Rekam Medik"><i class="fa fa-history"></i> Riwayat</button>
 									</td>
 								</tr>									
 								@endforeach
@@ -78,11 +77,10 @@ $pasien = $get_pasien->groupBy('user_id')->orderBy('user_id', 'asc')->get(['user
 
 </div>
 
-@foreach ($pasien as $dta)
+@foreach ($pemeriksaan as $i => $dta)
 @php
-$rekam_medik = $get_pasien->where('user_id', $dta->user->id)->get();
+$riwayat_kunjungan = $get_pemeriksaan->where('user_id', $dta->user->id)->get();
 @endphp
-
 <!-- MODAL DETAIL -->
 <div class="modal modal-detail{{ $dta->user->id }}" tabindex="-1" role="dialog" aria-labelledby="staticModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -159,7 +157,7 @@ $rekam_medik = $get_pasien->where('user_id', $dta->user->id)->get();
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($rekam_medik as $i => $dta)
+						@foreach ($riwayat_kunjungan as $i => $dta)
 						<tr>
 							<td>{{ (int)$i + 1 }}</td>
 							<td>18030302-{{ sprintf('%05s', $dta->id) }}</td>
@@ -188,12 +186,4 @@ $rekam_medik = $get_pasien->where('user_id', $dta->user->id)->get();
 <!-- ============================================================== -->
 <!-- End Right content here -->
 <!-- ============================================================== -->	
-@endsection
-
-@section('javascript')
-<script>
-	$(document).ready(function() {
-		$('#data-Table').dataTable();
-	});
-</script>
 @endsection

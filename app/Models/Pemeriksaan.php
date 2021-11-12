@@ -11,4 +11,19 @@ class Pemeriksaan extends Model
 
     protected $table = 'pemeriksaan';
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class);
+    }
+
+    public function dokter()
+    {
+        return $this->belongsTo(Doctor::class);
+    }
 }

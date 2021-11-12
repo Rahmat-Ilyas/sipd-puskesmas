@@ -128,7 +128,7 @@
                             </li>
 
                             <li class="has_sub">
-                                <a href="{{ url('admin/laporan') }}" class="waves-effect"><i class="ti-files"></i> <span> Laporan </span></a>
+                                <a href="{{ url('admin/laporan') }}" class="waves-effect" id="nv-laporan"><i class="ti-files"></i> <span> Laporan </span></a>
                             </li>
 
                             <li class="has_sub">

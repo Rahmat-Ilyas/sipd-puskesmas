@@ -1,5 +1,9 @@
-@extends('admin.layout')
+@extends('doctor.layout')
 @section('content')
+@php
+$pemeriksaan = new App\Models\Pemeriksaan;
+$pemeriksaan = $pemeriksaan->where('dokter_id', Auth::user()->id)->orderBy('id', 'desc')->get();
+@endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
 <!-- ============================================================== -->                      
@@ -9,13 +13,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12">
-					<h4 class="page-title">Data Antrian Pasien</h4>
+					<h4 class="page-title">Riwayat Pemeriksaan</h4>
 					<ol class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
 						</li>
 						<li class="active">
-							Data Antrian Pasien
+							Riwayat Pemeriksaan
 						</li>
 					</ol>
 				</div>
@@ -25,58 +29,36 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="card-box table-responsive">
-						<h5 class="text-dark font-14 pull-right" style="padding-bottom: 20px;">
-							<u class=" "><b>Tanggal Peayanan : </b> <i>{{ date('d-m-Y') }}</i></u>
-						</h5>
-						<h4 class="m-t-0 header-title"><b>Data Antrian Pasien</b></h4>
+						<h4 class="m-t-0 header-title"><b>Riwayat Pemeriksaan</b></h4>
 						<hr>
 						<table id="datatable" class="table table-striped table-bordered" style="margin-top: 20px;">
 							<thead>
 								<tr>
 									<th>No</th>
-									<th>No. Kunjungan</th>
-									<th>Waktu Antrian</th>
-									<th>No. Antrian</th>
+									<th width="100">No Kunjungan</th>
+									<th>Tggl Pemeriksaan</th>
+									<th>No. Pasien</th>
 									<th>Nama Pasien</th>
-									<th>Jenis Kelamin</th>
-									<th>Poli Tujuan</th>
-									<th>Status</th>
+									<th>Poli</th>
+									<th>Status Pulang</th>
 									<th>Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
+								@foreach ($pemeriksaan as $i => $dta)
 								<tr>
-									<td>1</td>
-									<td>18030302092P000564</td>
-									<td>24-10-2020 07:11</td>
-									<td>A-001</td>
-									<td>Muhammad Aladin</td>
-									<td>Laki-Laki</td>
-									<td>Poli Umum</td>
-									<td>
-										<span class="badge badge-success">Baru</span>
-									</td>
-									<td width="80">
-										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
-										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
+									<td>{{ (int)$i + 1 }}</td>
+									<td>18030302-{{ sprintf('%05s', $dta->id) }}</td>
+									<td>{{ date('d/m/Y H:i', strtotime($dta->tggl_pemeriksaan)) }}</td>
+									<td>{{ $dta->user->no_rekam_medik }}</td>
+									<td>{{ $dta->user->nama }}</td>
+									<td>{{ $dta->poli->nama_poli }}</td>
+									<td>{{ $dta->status_pulang }}</td>
+									<td width="80" class="text-center">
+										<button class="btn btn-sm btn-info" data-toggle="modal" data-target=".modal-detail{{ $dta->id }}"><i class="fa fa-list"></i> Detail</button>
 									</td>
 								</tr>
-								<tr>
-									<td>2</td>
-									<td>18030302092P000565</td>
-									<td>24-10-2020 07:25</td>
-									<td>A-002</td>
-									<td>Maemunah</td>
-									<td>Perempuan</td>
-									<td>Poli Umum</td>
-									<td>
-										<span class="badge badge-primary">Dipanggil</span>
-									</td>
-									<td width="80">
-										<button class="btn btn-sm btn-rounded btn-block btn-success"><i class="fa fa-volume-up"></i> Panggil</button>
-										<button class="btn btn-sm btn-rounded btn-block btn-danger"><i class="fa fa-arrow-circle-right"></i> Lewati</button>
-									</td>
-								</tr>
+								@endforeach
 							</tbody>
 						</table>
 					</div>
@@ -90,6 +72,87 @@
 	</footer>
 
 </div>
+
+@foreach ($pemeriksaan as $i => $dta)
+<!-- MODAL DETAIL -->
+<div class="modal modal-detail{{ $dta->id }}" tabindex="-1" role="dialog" aria-labelledby="staticModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Detail Pemeriksaan</h5>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td colspan="3" class="text-center"><b>Data Pasien</b></td>
+						</tr>
+						<tr>
+							<td width="200">No. Rekam Medik</td><td width="10">:</td>
+							<td>{{ $dta->user->no_rekam_medik }}</td>
+						</tr>
+						<tr>
+							<td>Nama Lengkap</td><td>:</td>
+							<td>{{ $dta->user->nama }}</td>
+						</tr>
+						<tr>
+							<td>Jenis Kelamin</td><td>:</td>
+							<td>{{ $dta->user->jenis_kelamin }}</td>
+						</tr>
+						<tr>
+							<td>Tempat & Tggl Lahir</td><td>:</td>
+							<td>{{ $dta->user->tempat_lahir.', '.date('d/m/Y', strtotime($dta->user->tanggal_lahir)) }}</td>
+						</tr>
+						<tr>
+							<td>Alamat</td><td>:</td>
+							<td>{{ $dta->user->alamat }}</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td colspan="3" class="text-center"><b>Data Pemeriksaan</b></td>
+						</tr>
+						<tr>
+							<td width="200">Tanggal Pemeriksaan</td><td width="10">:</td>
+							<td>{{ date('d-m-Y H:i', strtotime($dta->tggl_pemeriksaan)) }}</td>
+						</tr>
+						<tr>
+							<td>Poli</td><td>:</td>
+							<td>{{ $dta->poli->nama_poli }}</td>
+						</tr>
+						<tr>
+							<td>Keluhan</td><td>:</td>
+							<td>{{ $dta->keluhan }}</td>
+						</tr>
+						<tr>
+							<td>Diagnosis</td><td>:</td>
+							<td>{{ $dta->diagnosis }}</td>
+						</tr>
+						<tr>
+							<td>Status Pulang</td><td>:</td>
+							<td>{{ $dta->status_pulang }}</td>
+						</tr>
+						<tr>
+							<td>PRB</td><td>:</td>
+							<td>{{ $dta->prb }}</td>
+						</tr>
+						<tr>
+							<td>Prolanis</td><td>:</td>
+							<td>{{ $dta->prolanis }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer form-inline">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+			</div>
+		</div>
+	</div>
+</div>
+@endforeach
 
 
 <!-- ============================================================== -->

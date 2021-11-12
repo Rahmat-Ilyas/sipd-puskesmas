@@ -111,7 +111,7 @@ class DoctorController extends Controller
                 $result .= '
                 <tr>
                 <td>'.($i+1).'</td>
-                <td>'.date('d-m-Y H:i',  strtotime($dta->created_at)).'</td>
+                <td>'.date('d/m/Y H:i',  strtotime($dta->created_at)).'</td>
                 <td>'.$dta->nomor_antrian.'</td>
                 <td>'.$dta->user->no_rekam_medik.'</td>
                 <td>'.$dta->user->nama.'</td>

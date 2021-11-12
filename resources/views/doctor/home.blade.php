@@ -5,6 +5,11 @@ $poli = new App\Models\Poli;
 $poli_id = session('poli_id');
 $nama_poli = $poli->where('id', $poli_id)->first();
 $nama_poli = $nama_poli ? $nama_poli->nama_poli : 'Selamat Datang';
+
+$get_pasien = new App\Models\Pemeriksaan;
+$pasien = $get_pasien->where('dokter_id', Auth::user()->id)->groupBy('user_id')->get(['user_id']);
+
+$pasien_bln = $get_pasien->where('dokter_id', Auth::user()->id)->whereMonth('created_at', date('m'))->groupBy('user_id')->get(['user_id']);
 @endphp
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -33,14 +38,14 @@ $nama_poli = $nama_poli ? $nama_poli->nama_poli : 'Selamat Datang';
 				<div class="col-lg-3 col-sm-6">
 					<div class="widget-panel widget-style-2 bg-white">
 						<i class="fa fa-wheelchair text-pink"></i>
-						<h2 class="m-0 text-dark counter font-600">210</h2>
+						<h2 class="m-0 text-dark counter font-600">{{ count($pasien_bln) }}</h2>
 						<div class="text-muted m-t-5">Pasien Bulan Ini</div>
 					</div>
 				</div>
 				<div class="col-lg-3 col-sm-6">
 					<div class="widget-panel widget-style-2 bg-white">
 						<i class="fa fa-users text-info"></i>
-						<h2 class="m-0 text-dark counter font-600">18</h2>
+						<h2 class="m-0 text-dark counter font-600">{{ count($pasien) }}</h2>
 						<div class="text-muted m-t-5">Total Pasien</div>
 					</div>
 				</div>
