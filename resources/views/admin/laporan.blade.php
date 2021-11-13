@@ -2,6 +2,7 @@
 @section('content')
 @php
 $pemeriksaan = new App\Models\Pemeriksaan;
+$pemeriksaan = $pemeriksaan->orderBy('id', 'desc')->whereMonth('created_at', date('m'))->get();
 
 if (isset($_GET['laporan'])) {
 	if ($_GET['laporan'] == 'bulanan') {
