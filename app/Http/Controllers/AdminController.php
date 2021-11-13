@@ -239,6 +239,48 @@ class AdminController extends Controller
             $result = $antrian_tersedia;
 
             return response()->json($result, 200);
+        } else if ($request->req == 'getAntrianDisplay') {
+            $poli = Poli::where('status_layanan', 'Aktif')->get();
+
+            $result = [];
+            foreach ($poli as $i => $pli) {
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->get();
+                $antrian_poli = count($antrian)+1;
+
+                $get_nomor = [];
+                foreach ($antrian as $antr) {
+                    $get_nomor[] = $antr->nomor_antrian;
+                }
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)
+                ->where(function($q) {
+                    return $q->where('status', 'proccess')->orWhere('status', 'calling');
+                })->first();
+
+                if ($antrian) $antrian_dilayani = $antrian->nomor_antrian;
+                else {
+                    $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', 'finish')->orderBy('id', 'desc')->first();
+                    $antrian_dilayani = ($antrian) ? $antrian->nomor_antrian : range('A', 'Z')[$i].'-000';
+                }
+
+                $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('poli_id', $pli->id)->where('status', '!=', 'finish')->where('status', '!=', 'proccess')->get();
+                $sisa_antrian = count($antrian).' Antrian';
+
+                $cek_array = array_search($antrian_dilayani, $get_nomor);
+                if ($cek_array >= 0) {
+                    if (isset($get_nomor[$cek_array+1])) $antrian_selanjutnya = $get_nomor[$cek_array+1];
+                    else $antrian_selanjutnya = range('A', 'Z')[$i].'-000';
+                } else $antrian_selanjutnya = range('A', 'Z')[$i].'-000';
+
+                $result[] = [
+                    "poli_id" => $pli->id,
+                    "antrian_dilayani" => $antrian_dilayani,
+                    "antrian_selanjutnya" => $antrian_selanjutnya,
+                    "sisa_antrian" => $sisa_antrian,
+                ];
+            }
+
+            return response()->json($result, 200);
         } else if ($request->req == 'cekAntrian') {
             $result = false;
             $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('user_id', $request->user_id)->where('status', '!=', 'finish')->where('status', '!=', 'cancel')->first();

@@ -24,7 +24,7 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 	<script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
 
 </head>
-<body style="background: url('{{ asset('assets/images/agsquare.png') }}'); background-position: center; background-repeat: cover; background-repeat: no-repeat; background-size: 100% 100%;">
+<body style="background: url('{{ asset('assets/images/bggreen.png') }}'); background-position: center; background-repeat: cover; background-repeat: no-repeat; background-size: 100% 100%;">
 	<div class="row m-b-10">
 		<div class="col-sm-8">
 			<div id="carousel-example-captions-1" data-ride="carousel" class="carousel slide">
@@ -64,16 +64,16 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 					</div>
 					<div class="col-sm-5 text-center bg-inverse" style="opacity: 1; border: grey solid 2px; border-radius: 10px; padding-top: -10px;">
 						<h1 class="m-b-0 m-t-0 text-white" id="showTime">{{ date('H.i.s') }}</h1>
-						<b class="text-warning">{{ date('d F Y') }}</b>
+						<b style="color: #EF7318;">{{ date('d F Y') }}</b>
 					</div>
 				</div>
 				<hr>
 
 				<h1 class="text-center text-white"><b>NOMOR ANTRIAN</b></h1>
-				<h1 class="text-center" style="color: #EF7318; font-size: 70px; margin: 30px 30px;"><b>A-001</b></h1>
-				<h1 class="text-center text-white"><b>POLI UMUM</b></h1>
+				<h1 class="text-center" style="color: #EF7318; font-size: 70px; margin: 30px 30px;"><b>A-000</b></h1>
+				<h1 class="text-center text-white" style="text-transform: uppercase;"><b>POLI UMUM</b></h1>
 			</div>
-			<div class="bg-inverse" style="padding: 1px; height: 48px; color: #fff;">
+			<div class="bg-inverse" style="padding: 1px; height: 48px; color: #EF7318;">
 				<div class="m-t-15 m-l-10">
 					<i class="fa fa-volume-up fa-lg"></i> <sapn><i>Tidak ada panggilan antrian</i></sapn>
 				</div>
@@ -90,12 +90,16 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 						<hr>
 						<div class="row" style="margin-top: -10px;">
 							<div class="col-sm-6" style="border-right: 2px solid;">
-								<h1 style="font-size: 60px; color: #EF7318;" class="text-center"><b>A-001</b></h1>
+								<h1 style="font-size: 60px; color: #EF7318;" class="text-center">
+									<b id="antrian_dilayani{{ $dta->id }}">A-000</b>
+								</h1>
 							</div>
 							<div class="col-sm-6" style="padding-top: 8px;">
-								<span>Selanjutnya:</span> <b>A-002</b>
+								<span>Selanjutnya:</span> 
+								<b id="antrian_selanjutnya{{ $dta->id }}">A-000</b>
 								<hr style="margin: 5px;">
-								<span>Sisa:</span> <b>12 Antrian</b>
+								<span>Sisa:</span> 
+								<b id="sisa_antrian{{ $dta->id }}">0 Antrian</b>
 							</div>				
 						</div>
 					</div>
@@ -127,14 +131,31 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 
 	<script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
 	<script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
-	{{-- <script src="https://js.pusher.com/7.0/pusher.min.js"></script> --}}
+	<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 
 	<script>
 		$(document).ready(function() {
-			var url = "{{ url('doctor/config') }}";
+			var url = "{{ url('admin/config') }}";
 			var headers = {
 				"Accept": "application/json",
 				"X-CSRF-TOKEN" : "{{ csrf_token() }}"
+			}
+
+			getAntrian();
+			function getAntrian() {
+				$.ajax({
+					url     : url,
+					method  : "POST",
+					headers : headers,
+					data 	: { req: 'getAntrianDisplay' },
+					success : function(data) {						
+						$.each(data, function(key, val) {
+							$('#antrian_selanjutnya'+val.poli_id).text(val.antrian_selanjutnya);
+							$('#antrian_dilayani'+val.poli_id).text(val.antrian_dilayani);
+							$('#sisa_antrian'+val.poli_id).text(val.sisa_antrian);
+						});
+					}
+				});
 			}
 
 			if(document.addEventListener) {
@@ -153,16 +174,21 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 			}
 
 			// Initiate the Pusher JS library
-			// Pusher.logToConsole = true;
-			// var pusher = new Pusher('a5bf0a9f7538a3e6a68f', {
-			// 	cluster: 'ap1',
-			// 	encrypted: true
-			// });
+			Pusher.logToConsole = true;
+			var pusher = new Pusher('a5bf0a9f7538a3e6a68f', {
+				cluster: 'ap1',
+				encrypted: true
+			});
 
-			// var channel = pusher.subscribe('panggil-antrian');
-			// channel.bind('panggil-antrian', function(data) {
-			// 	console.log(data);
-			// });
+			var channel = pusher.subscribe('panggil-antrian');
+			channel.bind('panggil-antrian', function(data) {
+				console.log(data);
+			});
+
+			var channel = pusher.subscribe('ambil-antrian');
+			channel.bind('ambil-antrian', function(data) {
+				getAntrian();
+			});
 		});
 	</script>
 
