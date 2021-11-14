@@ -139,7 +139,7 @@ class DoctorController extends Controller
 
             if ($request->status == 'calling') {
                 $poli = Poli::where('id', $updt->poli_id)->first();
-                event(new PanggilAntrian($updt->nomor_antrian, $poli->nama_poli));                
+                event(new PanggilAntrian($updt->id));                
             }
 
             return response()->json(true, 200);

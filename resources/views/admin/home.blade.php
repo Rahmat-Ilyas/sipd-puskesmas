@@ -58,10 +58,10 @@ $pemeriksaan = $pemeriksaan->whereMonth('created_at', date('m'))->groupBy('user_
 				<div class="col-lg-12">
 					<div class="card-box">
 						<div class="text-center">
-                            <h2 style="margin-bottom: -8px;"><b>DINAS KESEHATAN</b></h2>
-                            <h3 style="margin-bottom: -8px;"><b>UPT PUSKESMAS BONTONOMPO II</b></h3>
-                            <h5 style="margin-bottom: -8px;"><i>JLN. BONTOCARADDE, Tamallayang,  Bontonompo, Sulawesi Selatan, South Sulawesi 92153</i></h5>
-                        </div>
+							<h2 style="margin-bottom: -8px;"><b>DINAS KESEHATAN</b></h2>
+							<h3 style="margin-bottom: -8px;"><b>UPT PUSKESMAS BONTONOMPO II</b></h3>
+							<h5 style="margin-bottom: -8px;"><i>JLN. BONTOCARADDE, Tamallayang,  Bontonompo, Sulawesi Selatan, South Sulawesi 92153</i></h5>
+						</div>
 					</div>
 				</div>
 				<div class="col-lg-12">

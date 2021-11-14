@@ -142,6 +142,14 @@ $poli = $poli->where('id', $poli_id)->first();
 		channel.bind('ambil-antrian', function(data) {
 			getAntrian();
 		});
+
+		var channel = pusher.subscribe('antrian-exist');
+		channel.bind('antrian-exist', function(data) {
+			var dokter_id = "{{ Auth::user()->id }}";
+			if (data.dokter_id == dokter_id) {
+				$.Notification.autoHideNotify('warning', 'top right', 'Dalam antrian panggilan, mohon tunggu sebentar!');
+			}
+		});
 	});
 </script>
 @endsection

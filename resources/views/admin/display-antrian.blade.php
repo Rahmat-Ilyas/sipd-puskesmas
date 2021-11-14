@@ -70,12 +70,12 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 				<hr>
 
 				<h1 class="text-center text-white"><b>NOMOR ANTRIAN</b></h1>
-				<h1 class="text-center" style="color: #EF7318; font-size: 70px; margin: 30px 30px;"><b>A-000</b></h1>
-				<h1 class="text-center text-white" style="text-transform: uppercase;"><b>POLI UMUM</b></h1>
+				<h1 class="text-center" style="color: #EF7318; font-size: 70px; margin: 30px 30px;"><b id="no_antrian_display">A-000</b></h1>
+				<h1 class="text-center text-white" style="text-transform: uppercase;"><b id="poli_display">POLI UMUM</b></h1>
 			</div>
 			<div class="bg-inverse" style="padding: 1px; height: 48px; color: #EF7318;">
 				<div class="m-t-15 m-l-10">
-					<i class="fa fa-volume-up fa-lg"></i> <sapn><i>Tidak ada panggilan antrian</i></sapn>
+					<i class="fa fa-volume-up fa-lg"></i> <sapn><i id="text_display">Tidak ada panggilan antrian</i></sapn>
 				</div>
 			</div>
 		</div>
@@ -132,6 +132,7 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 	<script src="{{ asset('assets/plugins/notifyjs/js/notify.js') }}"></script>
 	<script src="{{ asset('assets/plugins/notifications/notify-metro.js') }}"></script>
 	<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+	<script src="https://code.responsivevoice.org/responsivevoice.js?key=hmZQmkgc"></script>
 
 	<script>
 		$(document).ready(function() {
@@ -141,6 +142,9 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 				"X-CSRF-TOKEN" : "{{ csrf_token() }}"
 			}
 
+
+			responsiveVoice.speak("", "Indonesian Female");
+			panggilAntrian();
 			getAntrian();
 			function getAntrian() {
 				$.ajax({
@@ -180,15 +184,90 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 				encrypted: true
 			});
 
-			var channel = pusher.subscribe('panggil-antrian');
-			channel.bind('panggil-antrian', function(data) {
-				console.log(data);
-			});
-
 			var channel = pusher.subscribe('ambil-antrian');
 			channel.bind('ambil-antrian', function(data) {
 				getAntrian();
 			});
+
+			var channel = pusher.subscribe('panggil-antrian');
+			channel.bind('panggil-antrian', function(data) {
+				setData(data.antrian_id);
+				panggilAntrian();
+			});
+
+			// Set Dat Antrian
+			function setData(data) {
+				var data_antrian = localStorage.getItem('data_antrian');
+				data_antrian = $.parseJSON(data_antrian);
+				if (data_antrian) {
+					if (data_antrian.includes(data)) {
+						$.ajax({
+							url     : url,
+							method  : "POST",
+							headers : headers,
+							data 	: { 
+								req: 'cekAntrianDisplay',
+								antrian_id: data
+							}
+						});
+					} else data_antrian.push(data);
+				} else data_antrian = [data];
+
+				localStorage.setItem('data_antrian', JSON.stringify(data_antrian));
+			}
+
+			function delData(val) {
+				var data_antrian = localStorage.getItem('data_antrian');
+				data_antrian = $.parseJSON(data_antrian);
+				var i = data_antrian.indexOf(val);
+				if (i != -1) {
+					data_antrian.splice(i, 1);
+				}
+				localStorage.removeItem('data_antrian');
+				localStorage.setItem('data_antrian', JSON.stringify(data_antrian));
+			}
+
+			// Panggi Antrian
+			function panggilAntrian() {
+				var data_antrian = localStorage.getItem('data_antrian');
+				data_antrian = $.parseJSON(data_antrian);
+
+				if (data_antrian[0]) {
+					var antrian_id = data_antrian[0];
+
+					$.ajax({
+						url     : url,
+						method  : "POST",
+						headers : headers,
+						data 	: { 
+							req: 'getAntrianCalling',
+							antrian_id: antrian_id
+						},
+						success : function(data) {
+							if(!responsiveVoice.isPlaying()) {
+								responsiveVoice.speak(data.text_voice, "Indonesian Female", {
+									pitch: 0.9, 
+									rate: 0.9,
+									volume: 1,
+									onend: endCallback
+								});
+
+								$('#no_antrian_display').text(data.no_antrian);
+								$('#poli_display').text(data.poli);
+								$('#text_display').text(data.text_display);
+
+								function endCallback() {
+									delData(antrian_id);
+									setTimeout(function() {
+										panggilAntrian();
+									}, 3000)
+								}
+							}
+						}
+					});
+				}
+
+			}
 		});
 	</script>
 

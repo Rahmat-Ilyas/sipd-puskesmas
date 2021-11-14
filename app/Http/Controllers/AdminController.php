@@ -12,6 +12,7 @@ use App\Models\Admin;
 use App\Models\Antrian;
 
 use App\Events\AmbilAntrian;
+use App\Events\AntrianExist;
 
 class AdminController extends Controller
 {
@@ -281,6 +282,23 @@ class AdminController extends Controller
             }
 
             return response()->json($result, 200);
+        } else if ($request->req == 'getAntrianCalling') {
+            $antr = Antrian::where('id', $request->antrian_id)->first();
+
+            $nav = str_replace('-', ', ', $antr->nomor_antrian);
+            $nad = $antr->nomor_antrian;
+            $result = [
+                'no_antrian' => $antr->nomor_antrian,
+                'poli' => $antr->poli->nama_poli,
+                'text_voice' => "Nomor Antrian {$nav}, Silahkan Menuju ke {$antr->poli->nama_poli}",
+                'text_display' => "Nomor Antrian {$nad}, Silahkan Menuju ke {$antr->poli->nama_poli}"
+            ];
+
+            return response()->json($result, 200);
+        } else if ($request->req == 'cekAntrianDisplay') {
+            $antr = Antrian::where('id', $request->antrian_id)->first();
+            $dokter_id = $antr->poli->dokter_id;
+            event(new AntrianExist($dokter_id));
         } else if ($request->req == 'cekAntrian') {
             $result = false;
             $antrian = Antrian::whereDate('created_at', date('Y-m-d'))->where('user_id', $request->user_id)->where('status', '!=', 'finish')->where('status', '!=', 'cancel')->first();

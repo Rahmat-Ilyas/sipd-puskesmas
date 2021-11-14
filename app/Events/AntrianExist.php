@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PanggilAntrian implements ShouldBroadcast
+class AntrianExist implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,12 +19,12 @@ class PanggilAntrian implements ShouldBroadcast
      *
      * @return void
      */
+    
+     public $dokter_id;
 
-    public $antrian_id;
-
-    public function __construct($antrian_id)
+    public function __construct($dokter_id)
     {
-        $this->antrian_id = $antrian_id;
+        $this->dokter_id = $dokter_id;
     }
 
     /**
@@ -34,11 +34,11 @@ class PanggilAntrian implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['panggil-antrian'];
+        return ['antrian-exist'];
     }
 
     public function broadcastAs()
     {
-        return 'panggil-antrian';
+        return 'antrian-exist';
     }
 }
