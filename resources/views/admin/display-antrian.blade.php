@@ -232,7 +232,7 @@ $poli = $poli->where('status_layanan', 'Aktif')->get();
 				var data_antrian = localStorage.getItem('data_antrian');
 				data_antrian = $.parseJSON(data_antrian);
 
-				if (data_antrian[0]) {
+				if (data_antrian && data_antrian[0]) {
 					var antrian_id = data_antrian[0];
 
 					$.ajax({
