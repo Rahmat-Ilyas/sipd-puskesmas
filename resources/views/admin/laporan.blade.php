@@ -5,6 +5,7 @@ $pemeriksaan = new App\Models\Pemeriksaan;
 $pemeriksaan = $pemeriksaan->orderBy('id', 'desc')->whereMonth('created_at', date('m'))->get();
 
 if (isset($_GET['laporan'])) {
+	$pemeriksaan = new App\Models\Pemeriksaan;
 	if ($_GET['laporan'] == 'bulanan') {
 		$bulan = substr($_GET['bulan'], 5, 7);
 		$pemeriksaan = $pemeriksaan->orderBy('id', 'desc')->whereMonth('created_at', $bulan)->get();
