@@ -60,14 +60,14 @@ class AuthUserController extends Controller
     public function storeDaftar(Request $request)
     {
         $this->validate($request, [
-            'nik' => 'unique:user',
+            'nik' => 'unique:user|max:16|min:16',
         ]);
-        
+
         $user = User::orderBy('id', 'desc')->first();
-        $rekam_medik = $user ? $user->id+1 : 1;
+        $rekam_medik = $user ? $user->id + 1 : 1;
 
         $data = $request->all();
-        $data['no_rekam_medik'] = 'P'.sprintf('%06s', $rekam_medik);
+        $data['no_rekam_medik'] = 'P' . sprintf('%06s', $rekam_medik);
         $data['password'] = bcrypt($request->password);
 
         User::create($data);
