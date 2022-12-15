@@ -54,7 +54,7 @@
                                         <input type="number" name="nik" class="form-control" required=""
                                             placeholder="NIK.." autocomplete="off" value="{{ old('nik') }}">
                                         @if ($errors->any())
-                                            @if ($errors->first('nik') == 'The nik must be at least 16 characters.')
+                                            @if ($errors->first('nik') == 'The nik must not be greater than 16 characters.')
                                                 <small class="text-danger">NIK yang diinputkan harus 16 karakter</small>
                                             @else
                                                 <small class="text-danger">NIK yang anda masukkan sudah
